@@ -22,60 +22,88 @@ except Exception as e:
     print(f"Error initializing model: {e}")
     sys.exit(1)
 
-# 3. Your Curated List of RSS Feeds
-FEEDS = [
-    "https://idovan.substack.com/feed",
-    "https://cyberthreatreport.substack.com/feed",
-    "https://vsquare.org/feed/",
-    "https://ryanmcbeth.substack.com/feed",
-    "https://osintnewsletter.com/feed",
-    "https://zetter.substack.com/feed",
-    "https://danielmiessler.com/feed/",
-    "https://nki.gov.hu/feed/" 
-]
+# 3. Categorized Intelligence Feeds
+# Grouping them helps Gemini understand the context of the data it is reading.
+FEEDS = {
+    "Hungarian Core & Geoeconomics": [
+        "https://www.portfolio.hu/rss/all.xml",
+        "https://telex.hu/rss",
+        "https://www.hwsw.hu/xml/latest_news.xml",
+        "https://nki.gov.hu/feed/"
+    ],
+    "Geopolitics & CEE Region": [
+        "https://vsquare.org/feed/",
+        "https://warontherocks.com/feed/",
+        "https://balkaninsight.com/feed/",
+        "https://cepa.org/feed/"
+    ],
+    "Critical Infrastructure (ICS/OT)": [
+        "https://www.cisa.gov/uscert/ics/advisories/advisories.xml",
+        "https://www.dragos.com/feed/",
+        "https://www.securityweek.com/feed/"
+    ],
+    "Global Cyber & Threat Intel": [
+        "https://idovan.substack.com/feed",
+        "https://cyberthreatreport.substack.com/feed",
+        "https://ryanmcbeth.substack.com/feed",
+        "https://osintnewsletter.com/feed",
+        "https://zetter.substack.com/feed",
+        "https://danielmiessler.com/feed/",
+        "https://www.bleepingcomputer.com/feed/",
+        "https://feeds.feedburner.com/TheHackersNews",
+        "https://www.cyberscoop.com/feed/"
+    ]
+}
 
 # 4. Fetch and filter articles
 print("Fetching RSS feeds...")
 cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
 compiled_news = ""
 
-for url in FEEDS:
-    try:
-        parsed = feedparser.parse(url)
-        for entry in parsed.entries:
-            if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                entry_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
-                if entry_date > cutoff:
-                    summary = entry.get('summary', 'No summary provided')
-                    compiled_news += f"Source: {parsed.feed.title}\nTitle: {entry.title}\nSummary: {summary}\nLink: {entry.link}\n\n"
-    except Exception as e:
-        print(f"Error parsing {url}: {e}")
+for category, urls in FEEDS.items():
+    compiled_news += f"\n### CATEGORY: {category} ###\n"
+    for url in urls:
+        try:
+            parsed = feedparser.parse(url)
+            for entry in parsed.entries:
+                if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                    entry_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+                    if entry_date > cutoff:
+                        summary = entry.get('summary', 'No summary provided')
+                        # Clean up HTML tags from summaries to save tokens
+                        summary = summary.replace("<p>", "").replace("</p>", "").strip()[:500] 
+                        compiled_news += f"- Source: {parsed.feed.title}\n  Title: {entry.title}\n  Summary: {summary}...\n  Link: {entry.link}\n\n"
+        except Exception as e:
+            print(f"Error parsing {url}: {e}")
 
 if not compiled_news.strip():
     compiled_news = "No new articles found in the last 48 hours."
 
-# 5. The System Prompt for Gemini
-print("Sending to Gemini for synthesis...")
+# 5. The Upgraded System Prompt for Gemini
+print("Sending massive dataset to Gemini for synthesis...")
 prompt = f"""
-You are an expert cybersecurity intelligence analyst. Your task is to review the following compiled RSS feed data from the last 48 hours and synthesize a clear, highly structured daily briefing.
+You are an elite intelligence analyst specializing in the intersection of cybersecurity, geopolitics, and geoeconomics, with a specific focus on Hungary and the CEE region.
 
-The target audience is a beginner/intermediate cybersecurity learner based in Hungary. 
-Always provide context for technical jargon. Ensure the tone is educational.
+Your task is to analyze a massive influx of open-source intelligence from the last 48 hours and synthesize it into a highly actionable, structured briefing. You must connect the dots. If a geopolitical event in the news could impact Hungarian energy prices (geoeconomics) or trigger Russian cyber activity against critical infrastructure, you must highlight that connection.
 
 Structure the output exactly as follows using Markdown:
-## 1. Executive Summary
-(Provide a 3-bullet TL;DR of the most critical geopolitical or cyber events. Prioritize Hungarian/Central European impacts if present in the data.)
 
-## 2. Governmental Warnings & Context
-(Summarize alerts from sources like NKI. Do not just list CVE numbers—explain *how* the vulnerabilities are being used and why they matter in plain English.)
+## 1. The Macro Picture (Geopolitics & Geoeconomics)
+(Summarize the top global and regional geopolitical/economic shifts. Explicitly state how these events currently impact, or could impact, Hungary's strategic position or economy.)
 
-## 3. Industry News & Trends
-(Synthesize the deep-dives from the Substacks and OSINT newsletters. Explain the 'why' behind the news.)
+## 2. Critical Infrastructure & ICS Threat Landscape
+(Focus heavily on Dragos, CISA, and industrial threats. What is targeting power grids, manufacturing, or water? Explain the potential kinetic impact.)
 
-## 4. Deep Dive Recommendations
-(Highlight 2-3 specific articles or podcast show notes from the data that are worth a manual deep-dive today, with a 1-sentence hook for each and the link.)
+## 3. Hungarian Cyber & Tech Sector
+(Synthesize NKI alerts, Telex, HWSW, and local substacks. What is happening in the Hungarian IT and cyber space right now?)
 
-Here is the raw data to analyze:
+## 4. Global Cybercrime & APT Activity
+(Summarize the major breaches, ransomware trends, and nation-state (APT) operations globally. Keep technical jargon accessible for an intermediate learner.)
+
+## 5. Recommended Deep Dives
+(Select 3 specific articles from the provided data that provide the best educational value for someone learning about the intersection of these fields. Provide a 1-sentence hook and the link.)
+
+Here is the categorized raw intelligence data to analyze:
 {compiled_news}
 """
 
