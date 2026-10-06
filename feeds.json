@@ -1,0 +1,30 @@
+{
+  "Hungarian Core & Geoeconomics": [
+    "https://www.portfolio.hu/rss/all.xml",
+    "https://telex.hu/rss",
+    "https://www.hwsw.hu/xml/latest_news.xml",
+    "https://nki.gov.hu/feed/"
+  ],
+  "Geopolitics & CEE Region": [
+    "https://vsquare.org/feed/",
+    "https://warontherocks.com/feed/",
+    "https://balkaninsight.com/feed/",
+    "https://cepa.org/feed/"
+  ],
+  "Critical Infrastructure (ICS/OT)": [
+    "https://www.cisa.gov/uscert/ics/advisories/advisories.xml",
+    "https://www.dragos.com/feed/",
+    "https://www.securityweek.com/feed/"
+  ],
+  "Global Cyber & Threat Intel": [
+    "https://idovan.substack.com/feed",
+    "https://cyberthreatreport.substack.com/feed",
+    "https://ryanmcbeth.substack.com/feed",
+    "https://osintnewsletter.com/feed",
+    "https://zetter.substack.com/feed",
+    "https://danielmiessler.com/feed/",
+    "https://www.bleepingcomputer.com/feed/",
+    "https://feeds.feedburner.com/TheHackersNews",
+    "https://www.cyberscoop.com/feed/"
+  ]
+}
