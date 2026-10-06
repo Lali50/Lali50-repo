@@ -75,31 +75,47 @@ for category, urls in FEEDS.items():
 if not compiled_news.strip():
     compiled_news = "No new articles found in the last 48 hours."
 
-# 4. The Upgraded System Prompt for Gemini
-print("Sending massive dataset to Gemini for synthesis...")
+# 4. Read Yesterday's Briefing for Memory Context
+try:
+    with open("yesterday.md", "r", encoding="utf-8") as f:
+        yesterday_context = f.read().strip()
+        if not yesterday_context or yesterday_context == "null":
+            yesterday_context = "No previous briefing found. This is the first run."
+except FileNotFoundError:
+    yesterday_context = "No previous briefing found."
+
+# 5. The Upgraded System Prompt (with Anti-Redundancy)
+print("Sending massive dataset and yesterday's memory to Gemini...")
 prompt = f"""
 You are an elite intelligence analyst specializing in the intersection of cybersecurity, geopolitics, and geoeconomics, with a specific focus on Hungary and the CEE region.
 
-Your task is to analyze a massive influx of open-source intelligence from the last 48 hours and synthesize it into a highly actionable, structured briefing. You must connect the dots. If a geopolitical event in the news could impact Hungarian energy prices (geoeconomics) or trigger Russian cyber activity against critical infrastructure, you must highlight that connection.
+CRITICAL ANTI-REDUNDANCY RULE:
+Below is the briefing you generated YESTERDAY. You must cross-reference today's raw data against yesterday's briefing. 
+- DO NOT repeat a story from yesterday unless there is a significant new development.
+- If today's data contains a major new development to a story from yesterday, label it with [UPDATE] and briefly explain *what changed*.
+- Focus heavily on NET-NEW intelligence.
 
 Structure the output exactly as follows using Markdown:
 
 ## 1. The Macro Picture (Geopolitics & Geoeconomics)
-(Summarize the top global and regional geopolitical/economic shifts. Explicitly state how these events currently impact, or could impact, Hungary's strategic position or economy.)
+(Summarize top global and regional shifts. Explicitly state impacts on Hungary's strategic position or economy.)
 
 ## 2. Critical Infrastructure & ICS Threat Landscape
-(Focus heavily on Dragos, CISA, and industrial threats. What is targeting power grids, manufacturing, or water? Explain the potential kinetic impact.)
+(Focus on industrial threats. What is targeting power grids, manufacturing, or water? Explain potential kinetic impact.)
 
 ## 3. Hungarian Cyber & Tech Sector
-(Synthesize NKI alerts, Telex, HWSW, and local substacks. What is happening in the Hungarian IT and cyber space right now?)
+(Synthesize NKI alerts, Telex, HWSW, etc. What is happening in the Hungarian IT and cyber space right now?)
 
 ## 4. Global Cybercrime & APT Activity
-(Summarize the major breaches, ransomware trends, and nation-state (APT) operations globally. Keep technical jargon accessible for an intermediate learner.)
+(Summarize major breaches, ransomware trends, and APT operations globally. Keep jargon accessible.)
 
 ## 5. Recommended Deep Dives
-(Select 3 specific articles from the provided data that provide the best educational value for someone learning about the intersection of these fields. Provide a 1-sentence hook and the link.)
+(Select 3 specific articles providing the best educational value. Provide a 1-sentence hook and the link.)
 
-Here is the categorized raw intelligence data to analyze:
+=== YESTERDAY'S BRIEFING (YOUR MEMORY) ===
+{yesterday_context}
+
+=== TODAY'S RAW INTELLIGENCE DATA ===
 {compiled_news}
 """
 
