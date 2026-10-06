@@ -12,34 +12,15 @@ if not API_KEY:
 
 genai.configure(api_key=API_KEY)
 
-# 2. Dynamically select a model that ACTUALLY exists for this API key
-print("Asking Google for available models...")
-available_models = []
+# 2. Target the specific model requested by the Google API
+model_name = 'models/gemini-3.8-flash'
+print(f"Initializing model: {model_name}")
+
 try:
-    for m in genai.list_models():
-        if 'generateContent' in m.supported_generation_methods:
-            available_models.append(m.name)
+    model = genai.GenerativeModel(model_name)
 except Exception as e:
-    print(f"Error connecting to Google API: {e}")
+    print(f"Error initializing model: {e}")
     sys.exit(1)
-
-print(f"Models your API key has access to: {available_models}")
-
-if not available_models:
-    print("Error: Your API key does not have access to ANY text generation models. Check your Google AI Studio account.")
-    sys.exit(1)
-
-# Pick the best available model (Prefer 1.5 Flash, then 1.5 Pro, then fallback to whatever is first)
-model_name = available_models[0] 
-for name in available_models:
-    if 'gemini-1.5-flash' in name:
-        model_name = name
-        break
-    elif 'gemini-1.5' in name:
-        model_name = name
-
-print(f"Selected model: {model_name}")
-model = genai.GenerativeModel(model_name)
 
 # 3. Your Curated List of RSS Feeds
 FEEDS = [
