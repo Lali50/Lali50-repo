@@ -23,8 +23,14 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        # Using the new google-genai SDK for late 2026
         run: pip install feedparser google-genai
+
+      - name: Fetch Yesterday's Briefing (Memory)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Grabs the body of the most recent issue to use as context
+          gh issue list --state all --limit 1 --json body --jq '.[0].body' > yesterday.md || echo "No previous briefing found." > yesterday.md
 
       - name: Run Synthesis Script
         env:
