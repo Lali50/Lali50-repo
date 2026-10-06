@@ -6,7 +6,21 @@ from datetime import datetime, timedelta, timezone
 # 1. Initialize Gemini API
 API_KEY = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+
+# Dynamically find the best available model to avoid 404 errors
+print("Checking available models...")
+model_name = 'gemini-pro' # Absolute baseline fallback
+for m in genai.list_models():
+    if 'generateContent' in m.supported_generation_methods:
+        # Prefer the newest flash or pro models
+        if '1.5-flash' in m.name:
+            model_name = m.name
+            break
+        elif '1.5-pro' in m.name:
+            model_name = m.name
+
+print(f"Using model: {model_name}")
+model = genai.GenerativeModel(model_name)
 
 # 2. Your Curated List of RSS Feeds
 FEEDS = [
@@ -17,10 +31,10 @@ FEEDS = [
     "https://osintnewsletter.com/feed",
     "https://zetter.substack.com/feed",
     "https://danielmiessler.com/feed/",
-    "https://nki.gov.hu/feed/" # Hungarian National Cyber Security Center
+    "https://nki.gov.hu/feed/" 
 ]
 
-# 3. Fetch and filter articles (only keep the last 48 hours to avoid stale data)
+# 3. Fetch and filter articles
 print("Fetching RSS feeds...")
 cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
 compiled_news = ""
@@ -32,7 +46,6 @@ for url in FEEDS:
             if hasattr(entry, 'published_parsed') and entry.published_parsed:
                 entry_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
                 if entry_date > cutoff:
-                    # Clean up the summary text
                     summary = entry.get('summary', 'No summary provided')
                     compiled_news += f"Source: {parsed.feed.title}\nTitle: {entry.title}\nSummary: {summary}\nLink: {entry.link}\n\n"
     except Exception as e:
@@ -66,7 +79,7 @@ Here is the raw data to analyze:
 {compiled_news}
 """
 
-# 5. Generate and save the output to a markdown file
+# 5. Generate and save the output
 response = model.generate_content(prompt)
 
 with open("briefing.md", "w", encoding="utf-8") as f:
