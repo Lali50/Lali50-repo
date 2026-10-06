@@ -1,4 +1,5 @@
 import feedparser
+import time
 import os
 import sys
 import socket
@@ -102,15 +103,34 @@ Here is the categorized raw intelligence data to analyze:
 {compiled_news}
 """
 
-# 5. Generate and save the output
-try:
-    response = client.models.generate_content(
-        model=model_name,
-        contents=prompt
-    )
-    with open("briefing.md", "w", encoding="utf-8") as f:
-        f.write(response.text)
-    print("Briefing successfully generated and saved to briefing.md")
-except Exception as e:
-    print(f"Error during Gemini generation: {e}")
-    sys.exit(1)
+# 5. Generate and save the output (Chat Method + Retry Logic)
+max_retries = 4
+for attempt in range(max_retries):
+    try:
+        print(f"Attempt {attempt + 1} to contact Gemini API...")
+        
+        # Switched to the recommended Chat interface to silence the AFC warning
+        chat = client.chats.create(model=model_name)
+        response = chat.send_message(prompt)
+        
+        with open("briefing.md", "w", encoding="utf-8") as f:
+            f.write(response.text)
+        print("Briefing successfully generated and saved to briefing.md")
+        break # Success! Break out of the retry loop.
+        
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error during Gemini generation: {error_msg}")
+        
+        # If it is a 503 (Busy) or 429 (Rate Limit), wait and try again
+        if "503" in error_msg or "429" in error_msg:
+            if attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 20 # Waits 20s, then 40s, then 60s
+                print(f"API is busy. Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                print("Max retries reached. The API is completely swamped today.")
+                sys.exit(1)
+        else:
+            # If it is a totally different error, fail immediately
+            sys.exit(1)
