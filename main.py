@@ -1,28 +1,47 @@
 import feedparser
 import google.generativeai as genai
 import os
+import sys
 from datetime import datetime, timedelta, timezone
 
 # 1. Initialize Gemini API
 API_KEY = os.environ.get("GEMINI_API_KEY")
+if not API_KEY:
+    print("Error: GEMINI_API_KEY secret is missing!")
+    sys.exit(1)
+
 genai.configure(api_key=API_KEY)
 
-# Dynamically find the best available model to avoid 404 errors
-print("Checking available models...")
-model_name = 'gemini-pro' # Absolute baseline fallback
-for m in genai.list_models():
-    if 'generateContent' in m.supported_generation_methods:
-        # Prefer the newest flash or pro models
-        if '1.5-flash' in m.name:
-            model_name = m.name
-            break
-        elif '1.5-pro' in m.name:
-            model_name = m.name
+# 2. Dynamically select a model that ACTUALLY exists for this API key
+print("Asking Google for available models...")
+available_models = []
+try:
+    for m in genai.list_models():
+        if 'generateContent' in m.supported_generation_methods:
+            available_models.append(m.name)
+except Exception as e:
+    print(f"Error connecting to Google API: {e}")
+    sys.exit(1)
 
-print(f"Using model: {model_name}")
+print(f"Models your API key has access to: {available_models}")
+
+if not available_models:
+    print("Error: Your API key does not have access to ANY text generation models. Check your Google AI Studio account.")
+    sys.exit(1)
+
+# Pick the best available model (Prefer 1.5 Flash, then 1.5 Pro, then fallback to whatever is first)
+model_name = available_models[0] 
+for name in available_models:
+    if 'gemini-1.5-flash' in name:
+        model_name = name
+        break
+    elif 'gemini-1.5' in name:
+        model_name = name
+
+print(f"Selected model: {model_name}")
 model = genai.GenerativeModel(model_name)
 
-# 2. Your Curated List of RSS Feeds
+# 3. Your Curated List of RSS Feeds
 FEEDS = [
     "https://idovan.substack.com/feed",
     "https://cyberthreatreport.substack.com/feed",
@@ -34,7 +53,7 @@ FEEDS = [
     "https://nki.gov.hu/feed/" 
 ]
 
-# 3. Fetch and filter articles
+# 4. Fetch and filter articles
 print("Fetching RSS feeds...")
 cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
 compiled_news = ""
@@ -54,7 +73,7 @@ for url in FEEDS:
 if not compiled_news.strip():
     compiled_news = "No new articles found in the last 48 hours."
 
-# 4. The System Prompt for Gemini
+# 5. The System Prompt for Gemini
 print("Sending to Gemini for synthesis...")
 prompt = f"""
 You are an expert cybersecurity intelligence analyst. Your task is to review the following compiled RSS feed data from the last 48 hours and synthesize a clear, highly structured daily briefing.
@@ -79,10 +98,12 @@ Here is the raw data to analyze:
 {compiled_news}
 """
 
-# 5. Generate and save the output
-response = model.generate_content(prompt)
-
-with open("briefing.md", "w", encoding="utf-8") as f:
-    f.write(response.text)
-
-print("Briefing successfully generated and saved to briefing.md")
+# 6. Generate and save the output
+try:
+    response = model.generate_content(prompt)
+    with open("briefing.md", "w", encoding="utf-8") as f:
+        f.write(response.text)
+    print("Briefing successfully generated and saved to briefing.md")
+except Exception as e:
+    print(f"Error during Gemini generation: {e}")
+    sys.exit(1)
