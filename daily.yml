@@ -1,0 +1,42 @@
+name: Daily Cyber Briefing
+
+on:
+  schedule:
+    # Runs automatically at 04:00 UTC (06:00 AM Budapest Time)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    # This magic line adds a "Run Workflow" button so you can test it manually right now!
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        # Installs the feed parser and the official Gemini API package
+        run: pip install feedparser google-generativeai
+
+      - name: Run Synthesis Script
+        env:
+          # Pulls your API key securely from GitHub Secrets
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main.py
+
+      - name: Create GitHub Issue
+        env:
+          # A built-in GitHub token used to create the Issue
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          gh issue create --title "🛡️ Daily Cyber Briefing: $DATE" --body-file briefing.md
