@@ -43,6 +43,14 @@ def fetch_recent_news(feeds_dict, hours_back=48):
 
     if not compiled_news.strip():
         return "No new articles found."
+        
+    # --- THE TOKEN LIMIT FIX ---
+    # Cap the output at 200,000 characters to stay well under the Token Per Minute limit.
+    max_chars = 200000
+    if len(compiled_news) > max_chars:
+        print(f"Warning: News volume high ({len(compiled_news)} chars). Truncating to fit API limits.")
+        compiled_news = compiled_news[:max_chars] + "\n\n...[DATA TRUNCATED TO PREVENT API 429 ERROR]..."
+        
     return compiled_news
 
 def get_yesterdays_memory(filepath="yesterday.md"):
