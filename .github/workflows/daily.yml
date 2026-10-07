@@ -23,7 +23,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install feedparser google-genai
+        run: pip install -r requirements.txt
 
       - name: Fetch Yesterday's Briefing (Memory)
         env:
