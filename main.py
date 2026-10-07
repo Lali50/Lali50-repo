@@ -228,10 +228,8 @@ Structure the output exactly as follows using Markdown:
 
     for attempt in range(max_retries):
         try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt
-            )
+            chat = client.chats.create(model=model_name)
+            response = chat.send_message(prompt)
             
             # Validate output thoroughly
             if not response or not response.text or not response.text.strip():
