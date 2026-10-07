@@ -37,7 +37,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # Allows you to dynamically change models via GitHub Secrets/Vars
           GEMINI_MODEL: "gemini-3.8-flash" 
-          TEST_MODE: "true"
+          TEST_MODE: "false"
         run: python main.py
         
 
