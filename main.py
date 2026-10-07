@@ -7,7 +7,6 @@ import logging
 import hashlib
 import random
 from datetime import datetime, timedelta, timezone
-from time import mktime
 
 import feedparser
 from bs4 import BeautifulSoup
@@ -27,7 +26,7 @@ def get_entry_datetime(entry):
     parsed = entry.get("published_parsed") or entry.get("updated_parsed")
     if not parsed:
         return None
-    return datetime.fromtimestamp(mktime(parsed), tz=timezone.utc)
+    return datetime(*parsed[:6], tzinfo=timezone.utc)
 
 def clean_text(value: str | None, limit: int = 500) -> str:
     """Uses BeautifulSoup to strip HTML, unescape entities, and enforce length limits."""
@@ -173,6 +172,18 @@ def get_yesterdays_memory(filepath="yesterday.md"):
         return "No previous briefing found."
 
 def generate_briefing(news_data, memory_data):
+    """Sends compiled data and memory to Gemini API with robust retries and validation."""
+    
+    # --- TEST MODE  ---
+    if os.environ.get("TEST_MODE") == "true":
+        logger.info("TEST MODE ACTIVE: Bypassing Gemini API to save daily quota.")
+        return "## 1. The Macro Picture (Geopolitics & Geoeconomics)\n[TEST MODE SUCCESS]\n## 2. Critical Infrastructure & ICS Threat Landscape\n[TEST MODE SUCCESS]\n## 3. Hungarian Cyber & Tech Sector\n[TEST MODE SUCCESS]\n## 4. Global Cybercrime & APT Activity\n[TEST MODE SUCCESS]\n## 5. Recommended Deep Dives\n[TEST MODE SUCCESS]"
+    # ----------------------------------
+
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        logger.error("GEMINI_API_KEY secret is missing in environment!")
+        sys.exit(1)
     """Sends compiled data and memory to Gemini API with robust retries and validation."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
