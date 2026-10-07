@@ -1,0 +1,4 @@
+# requirements.txt
+feedparser>=6.0.10
+google-genai>=0.2.0
+beautifulsoup4>=4.12.0
