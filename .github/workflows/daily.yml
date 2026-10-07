@@ -35,7 +35,19 @@ jobs:
       - name: Run Synthesis Script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Allows you to dynamically change models via GitHub Secrets/Vars
+          GEMINI_MODEL: "gemini-3.8-flash" 
         run: python main.py
+
+      # IMPORTANT: Commit the newly generated yesterday.md and briefing.md 
+      # back to the repository so the memory persists for tomorrow's run.
+      - name: Commit Memory & Briefing
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add briefing.md yesterday.md
+          git commit -m "Automated update: Cyber Briefing & Memory State" || echo "No changes to commit"
+          git push
 
       - name: Create GitHub Issue
         env:
