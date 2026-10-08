@@ -2,8 +2,8 @@ name: Daily Cyber Briefing
 
 on:
   schedule:
-    # Runs automatically at 04:00 UTC (06:00 AM Budapest Time)
-    - cron: '0 4 * * *'
+    # Runs automatically at designated time
+    - cron: '43 3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,14 +35,11 @@ jobs:
       - name: Run Synthesis Script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # Allows you to dynamically change models via GitHub Secrets/Vars
+          # model setting, test mode
           GEMINI_MODEL: "gemini-3.8-flash" 
           TEST_MODE: "false"
         run: python main.py
         
-
-      # IMPORTANT: Commit the newly generated yesterday.md and briefing.md 
-      # back to the repository so the memory persists for tomorrow's run.
       - name: Commit Memory & Briefing
         run: |
           git config --global user.name "github-actions[bot]"
