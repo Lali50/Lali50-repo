@@ -22,3 +22,4 @@ Az API nemcsak napi lekérdezések számában korlátozott, hanem max token is m
 
 Mivel nagyjából úgy van beállítva, hogy a napi 1 lekérdezés ki is meríti a rendelkezésre álló API erőforrást, így viszonylag nehéz gyorsan meghatározni hogy milyen is az eredmény 
 
+Először helyi idő szerint 6:00-kor kérte az API hozzáférést a program, emiatt sokszor 503-as hibakód érkezett vissza. Ez főleg amiatt lehet, hogy "egész" órakor több kérést indítanak, ezért ezt megváltoztattam egy "nem kerek" időpontra, így már 10.09-én megkaptam az első használhatóbb napi összefoglalót.
