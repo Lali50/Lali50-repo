@@ -13,11 +13,10 @@ from bs4 import BeautifulSoup
 from google import genai
 
 # --- CONFIGURATION & LIMITS ---
-socket.setdefaulttimeout(10) # Prevent hangs on slow websites
-MAX_ITEMS_PER_FEED = 15
-MAX_TOTAL_ITEMS = 120
+socket.setdefaulttimeout(10) 
+MAX_ITEMS_PER_FEED = 13
+MAX_TOTAL_ITEMS = 160
 
-# Setup logging suitable for GitHub Actions
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ def get_entry_datetime(entry):
         return None
     return datetime(*parsed[:6], tzinfo=timezone.utc)
 
-def clean_text(value: str | None, limit: int = 500) -> str:
+def clean_text(value: str | None, limit: int = 800) -> str:
     """Uses BeautifulSoup to strip HTML, unescape entities, and enforce length limits."""
     if not value:
         return ""
