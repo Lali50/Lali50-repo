@@ -31,4 +31,6 @@ Ezzel összefügg azonban a github actions limitje is, ez havi szinten 2000 perc
 
 Bővítésre került a feeds, ezzel azonban az jár, hogy a közéleti, általános magyar híroldalaknál (eddig csak telex és portfolio volt benne) érdemes differenciálást alkalmazni, jelölni, hogy milyen forrásból érkezik a cikk amit feldolgoz. A korábbi cca. 20 feed helyett így most 60 felett lett, bővítve ezzel a perspektívát. 
 
+Githubon nem látható, de egy github API segítsével, minden reggel az összefoglalót lementi az iCloud notes-ba, pontosan 7:00-kor, erről értesítést küld. Ezt az apple shortcuts segítségével tudtam automatizálni. 
+
 
