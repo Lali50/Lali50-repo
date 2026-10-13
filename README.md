@@ -1,43 +1,43 @@
 # Lali50-repo
 
-Az alapötlet az, hogy egy aggregált newsfeedet kapjak minden reggel. 
+A platform egy kiberbiztonsági és geopolitikai aggregált hírforrás. Az ötlet alapvetően az volt, hogy reggelente kapjak egy összefoglalót a "nagy világ" történéseiről, de persze elsősorban a kiberbiztonsági relevanciával bíró hírekről. 
 
-Ehhez először felvettem azokat az oldalakat amelyeket már most is követek, illetve kerestem újakat. 
-Ezek többnyire kiberbiztonsági , geopolitikai vagy technológiákkal kapcsolatos oldalak, substack feedek stb. 
-Ezek a források találhatóak a 'feeds.json'-ben
+A program kiberbiztonsági, geopolitikai, technológiai valamint közéleti oldalakat, substack feedeket dolgoz fel. Az aggregálás és értelmezés Google Gemini API (személyes előfizetéssel) történik. 
 
-Maga az aggregálás és értelmezés egy Google Gemini API segítségével történik, ehhez kapott hozzáférést az oldal
+  Felépítés 
 
-A változtásokon látszik, hogy nem zökkenőmentes a folyamat 
+Az adatforrások egy könnyen változtatható .json-ben lettek meghatározva. Ide bármikor új RSS feedet lehet csatolni
 
-Először nagyon kevés anyagból dolgozott, és ezek nem is voltak külön fájlba véve, ezeket bővítve lett meg a feeds.json
+Mivel az hírforrások egy része közéleti, így fontosnak tartottam, hogy differenciálva legyen a politikai beállítottságuk, ne csak jelöletlenül érkezzen be hír ezekről az oldalakról. Fontosnak tartom a több, változó forrásból való tájékozódást, függetlenül a hírforrás függetlenségi szintjétől, viszont helyén kell kezelni ezeket az adatokat. 
 
-A modell alapvetően az elmúlt 48 óra híreiből működik, ezért hogy ne legyen átfedés, ismétlés készít egy yesterday.md fájlt amit későbbi napokon elolvas a modell, értelmezi, hogy amit már leadott azt ne ismételje, de ha a tegnapi hírhez van fejlemény azt jelzi
+Klaszterenként és oldalanként is lettek limitek meghatározva, hogy ne csak egy oldal hírei lepjék el a jelentést, illetve minden klaszterről egyenlően érkezzen be adat. Ezek a limitek szabadon változtathatók, egészen biztosan kell is majd rajtuk alakítani, ehhez azonban idő kell, hogy tisztázódjon miből kell több, és miből esetleg kevesebb. 
 
-viszonylag több időt vesz igénybe egy ilyen 'eszköz' felépítése, mivel meg kell jelennie új híreknek, hogy azokat tudja kezelni, és értékelni lehessen az outputot.
+A githubon nem látható, de a jelentés miután bekerült az 'Issues' fül alá, Apple Shortcuts segítségével a telefonomra, iCloud Notes-ba kerül, így valamivel egyszerűbben hozzáférek, valamint egy másik helyen is mentésre kerül a jelentés, így ha valamilyen oknál fogva megszűnne ez a github repo, akkor is hozzáférnék korábbi jelentésekhez. 
 
-Beépítésre került egy test mode is, ez arra hivatott, hogy ne fogyassza a véges API előfizetésemet. Így 429 vagy 503-as hibakódokat nem dob, tesztelhető minden más folyamat is. 
 
-Az API nemcsak napi lekérdezések számában korlátozott, hanem max token is meg van adva, ezért szükséges volt beépíteni olyan limiteket, melyek csökkentik a Gemini felé küldött anyagok mennyiségét, hogy ne lépjem túl. 
+  Memória 
 
-Mivel nagyjából úgy van beállítva, hogy a napi 1 lekérdezés ki is meríti a rendelkezésre álló API erőforrást, így viszonylag nehéz gyorsan meghatározni hogy milyen is az eredmény 
+A hírösszefoglaláson kívül egyfajta memóriával is rendelkezik a program, ez több részből áll fel: 
 
-Először helyi idő szerint 6:00-kor kérte az API hozzáférést a program, emiatt sokszor 503-as hibakód érkezett vissza. Ez főleg amiatt lehet, hogy "egész" órakor több kérést indítanak, ezért ezt megváltoztattam egy "nem kerek" időpontra, így már 10.09-én megkaptam az első használhatóbb napi összefoglalót.
+1. Profil: Személyre szabható, specifikus infrastruktúra, szoftverek, támadók jelölhetőek ki, így relevánsabb információt ad a jelentés. Ez egyelőre részemről ki van kapcsolva, nincs megadva környezet.
+2. Redundancia csökkentés, kampánykövetés:
+     yesterday.md: tárgynapot megelőző napi jelentést tartalmazza, így a hírösszefoglaló tudja mit nem kell már leírnia, viszont új információ esetén frissítést tud adni korábban már leírt eseményről
+     active_campaigns.json: nagyobb távlatú, 30 napos tár, kifejezetten a támadásokra fókuszálva, hetekkel később is tud frissítést adni (elvileg)
+3. Kereshető adatbázis: intel_ledger_jsonl egy hosszú távú, támadások paramétereit leíró adatbázis/lenyomat későbbi elemzés céljából
 
-Minimálisan változtatva lett a források feldolgozásához kötött limitek, hosszabb összefoglalókat készíthet, viszont oldalanként kevesebb cikkel, így nem dominál annyira egy oldal a jelentésben. 
 
-Mind az API mint a github actions limitjeit vizsgálva, az látszik, hogy egyik sincs megfelelően kihasználva. Az API-nak egy 250 ezer tokenes limitje van, ez az elmúlt időszakban a 10 ezret sem érte el. Mivel másra nem használom ezt az API-t , így lehetne ezen növelni, tehát több forrást tenni a feeds-be, vagy a meglévő forrásokból hosszabb összefoglalót készíteni. 
-Ezzel összefügg azonban a github actions limitje is, ez havi szinten 2000 percet jelent. Az eddigi (10.13) futások 50 mp és 2p közötti terjedelemben vannak, így bőven van kapacitás hosszabb lekérdezéseket futtatni, anélkül, hogy megütnénk a limitet. A tesztelés miatt már el lett használva cca. 60 perc ebből, viszont még így is bőven lenne lehetőség akár 20-30 perces action-öket futtatni minden reggeli jelentéshez. 
+  Tapasztalatok: 
 
-Bővítésre került a feeds, ezzel azonban az jár, hogy a közéleti, általános magyar híroldalaknál (eddig csak telex és portfolio volt benne) érdemes differenciálást alkalmazni, jelölni, hogy milyen forrásból érkezik a cikk amit feldolgoz. A korábbi cca. 20 feed helyett így most 60 felett lett, bővítve ezzel a perspektívát. 
+A projekt során a legnagyobb nehézséget a Gemini API okozta. Automatizálva van a futás, először 6:00-ra lett beállítva, ez mivel "egész óra" sokszor 503-as hibakódot dobott, így átraktam egy másik időpontra helyi idő szerint hajnalban, ahol eddig nem volt vele még probléma. 
 
-Githubon nem látható, de egy github API segítsével, minden reggel az összefoglalót lementi az iCloud notes-ba, pontosan 7:00-kor, erről értesítést küld. Ezt az apple shortcuts segítségével tudtam automatizálni. 
+Ez csak az automatikus futásra igaz sajnos. Mivel napközben foglakoztam a programmal, így akkor is szerettem volna kipróbálni, hogy adott új funkció vagy megváltoztatott limit hogyan változtat a végeredményen. Mivel ezek munkaidőben történetek, szinte mindig 503-as hibakód érkezett vissza 10 óra után, és ez délutánra sem javult.
 
-Mivel egészen elfogadható eredményt ad a program, és automatikusan kiküldésre kerül, így az alap célkitűzéseimnek teljesen megfelel. Erre a stabil verzióra bármikor vissza lehet állítani. 
+A hibakód ellenére a program közel nem használja ki a Gemini API és a GitHub által biztosított limiteket. Egy átlagos futtatás 2-3 percet vesz igénybe, 10-15 ezer token mellett. A Gemini API-nál releváns limit (napi 1 futásnál) a 250 ezer percenkénti token, ezt közel sem éri el. GitHub-nál havi 2000 perc limit van, ez bőven lehetőséget  adna akár napi 20-30 perces futtatásokra is. 
 
-Mivel a célnak már megfelel, így a továbbfejlesztésén foglalkoztam, ez 3 plusz funkcióban jelenik meg. Az első egy profil, amely segítségével személyre szabhatóbb a jelentés. Itt meg lehet adni, milyen infrastruktúra, milyen szoftverek érdekelnek kiemelten. Ezt azért gondoltam fontosnak, hogy ha később egy adott rendszer mellett dolgozom, ott releváns információkat kapjak erre vonatkozóan. 
+A jelenlegit verzió stabil, kiküldésre is kerül és megfelel az alapkövetelményeknek. Főleg a klaszterenkénti/oldalankénti limiteket lesz majd szükséges változtatni, hogy minél több adatot tudjon feldolgozni az API, anélkül hogy 429-es (too many requests) hibakódba ütközzön a lekérdezés. 
 
-Második a már meglévő yesterday.md továbbgondolása. Eddig a program tudta, hogy a tegnapi jelentés mi volt, így elkerülte a redundáns információkat, tudott frissítéseket kiadni. az active_campaigns.json-be kerülnek a nagyobb időtartamű, szélesebb körű támadások leírásai. Ez már egy 30 napos tudástárat ad a programnak, ami így hetekkel később is tud frissítést kiadni egy adott támadásra. 
+Az jelentés angolul érkezik, ennek egyszerű oka van: reggel, este egyébként is olvasok magyarul, viszont angol nyelven változó hogy mennyit tudok egy nap, viszont szeretném szinten tartani a tudásomat. Mivel a Gemini képes lenne magyarul is megírni a jelentést, így ennek megváltoztatása nem lenne nagy feladat. 
 
-A harmadik intel_ledger.jsonl egy kereshető, hosszú távú lenyomat, minden nap frissül a releváns adatokkal, (támadó, támadott szektor, ttp-k etc). Nem a napi jelentések összefűzése, csak a kibertámadásokra fókuszál 
 
+
+  
