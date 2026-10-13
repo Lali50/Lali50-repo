@@ -26,6 +26,9 @@ Először helyi idő szerint 6:00-kor kérte az API hozzáférést a program, em
 
 Minimálisan változtatva lett a források feldolgozásához kötött limitek, hosszabb összefoglalókat készíthet, viszont oldalanként kevesebb cikkel, így nem dominál annyira egy oldal a jelentésben. 
 
-Mind az API mint a github actions limitjeit vizsgálva, az látszik, hogy egyik sincs megfelelően kihasználva. Az API-nak egy 250 ezer tokenes limitje van, ez az elmúlt időszakban a 10 ezret sem érte el. Mivel másra nem használom ezt az API, így lehetne ezen növelni, tehát több forrást tenni a feeds-be, vagy a meglévő forrásokból hosszabb összefoglalót készíteni. 
+Mind az API mint a github actions limitjeit vizsgálva, az látszik, hogy egyik sincs megfelelően kihasználva. Az API-nak egy 250 ezer tokenes limitje van, ez az elmúlt időszakban a 10 ezret sem érte el. Mivel másra nem használom ezt az API-t , így lehetne ezen növelni, tehát több forrást tenni a feeds-be, vagy a meglévő forrásokból hosszabb összefoglalót készíteni. 
 Ezzel összefügg azonban a github actions limitje is, ez havi szinten 2000 percet jelent. Az eddigi (10.13) futások 50 mp és 2p közötti terjedelemben vannak, így bőven van kapacitás hosszabb lekérdezéseket futtatni, anélkül, hogy megütnénk a limitet. A tesztelés miatt már el lett használva cca. 60 perc ebből, viszont még így is bőven lenne lehetőség akár 20-30 perces action-öket futtatni minden reggeli jelentéshez. 
+
+Bővítésre került a feeds, ezzel azonban az jár, hogy a közéleti, általános magyar híroldalaknál (eddig csak telex és portfolio volt benne) érdemes differenciálást alkalmazni, jelölni, hogy milyen forrásból érkezik a cikk amit feldolgoz. A korábbi cca. 20 feed helyett így most 60 felett lett, bővítve ezzel a perspektívát. 
+
 
