@@ -33,4 +33,11 @@ Bővítésre került a feeds, ezzel azonban az jár, hogy a közéleti, általá
 
 Githubon nem látható, de egy github API segítsével, minden reggel az összefoglalót lementi az iCloud notes-ba, pontosan 7:00-kor, erről értesítést küld. Ezt az apple shortcuts segítségével tudtam automatizálni. 
 
+Mivel egészen elfogadható eredményt ad a program, és automatikusan kiküldésre kerül, így az alap célkitűzéseimnek teljesen megfelel. Erre a stabil verzióra bármikor vissza lehet állítani. 
+
+Mivel a célnak már megfelel, így a továbbfejlesztésén foglalkoztam, ez 3 plusz funkcióban jelenik meg. Az első egy profil, amely segítségével személyre szabhatóbb a jelentés. Itt meg lehet adni, milyen infrastruktúra, milyen szoftverek érdekelnek kiemelten. Ezt azért gondoltam fontosnak, hogy ha később egy adott rendszer mellett dolgozom, ott releváns információkat kapjak erre vonatkozóan. 
+
+Második a már meglévő yesterday.md továbbgondolása. Eddig a program tudta, hogy a tegnapi jelentés mi volt, így elkerülte a redundáns információkat, tudott frissítéseket kiadni. az active_campaigns.json-be kerülnek a nagyobb időtartamű, szélesebb körű támadások leírásai. Ez már egy 30 napos tudástárat ad a programnak, ami így hetekkel később is tud frissítést kiadni egy adott támadásra. 
+
+A harmadik intel_ledger.jsonl egy kereshető, hosszú távú lenyomat, minden nap frissül a releváns adatokkal, (támadó, támadott szektor, ttp-k etc). Nem a napi jelentések összefűzése, csak a kibertámadásokra fókuszál 
 
