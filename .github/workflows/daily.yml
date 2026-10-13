@@ -2,39 +2,58 @@ name: Daily Cyber Briefing
 
 on:
   schedule:
-    # Runs automatically at designated time
+    # 03:43 UTC = 05:43 Budapest time (bypasses top-of-the-hour API traffic)
     - cron: '43 3 * * *'
   workflow_dispatch:
 
 permissions:
-  issues: write
   contents: write
+  issues: write
 
 jobs:
-  build-and-publish:
+  daily-briefing:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Fetch Yesterday's Briefing (Memory)
+      - name: Fetch Yesterday's Briefing
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Grabs the body of the most recent issue to use as context
           gh issue list --state all --limit 1 --json body --jq '.[0].body' > yesterday.md || echo "No previous briefing found." > yesterday.md
 
-      - name: Run Synthesis Script
+      - name: Run Synthesis Pipeline
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: "gemini-3.8-flash"
+        run: python main.py
+
+      - name: Commit Briefing, Campaigns & Ledger
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add briefing.md yesterday.md active_campaigns.json intel_ledger.jsonl
+          git commit -m "Automated update: Briefing, Memory, Campaigns & Ledger [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Create GitHub Issue Archive
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          gh issue create --title "🛡️ Daily Cyber Briefing: $DATE" --body-file briefing.md          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # model setting, test mode
           GEMINI_MODEL: "gemini-3.8-flash" 
           TEST_MODE: "false"
