@@ -13,9 +13,10 @@ from bs4 import BeautifulSoup
 from google import genai
 
 # --- CONFIGURATION & LIMITS ---
-socket.setdefaulttimeout(10) 
-MAX_ITEMS_PER_FEED = 13
-MAX_TOTAL_ITEMS = 160
+socket.setdefaulttimeout(10)
+MAX_ITEMS_PER_FEED = 8        
+MAX_ITEMS_PER_CATEGORY = 45   
+MAX_TOTAL_ITEMS = 180         
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -111,17 +112,27 @@ def fetch_recent_news(feeds_dict, hours_back=48):
     feeds_failed = 0
 
     for category, urls in feeds_dict.items():
+        if total_articles >= MAX_TOTAL_ITEMS:
+            logger.warning("Global max article limit reached. Halting all collection.")
+            break
+
         category_output = ""
+        category_articles_count = 0
+        
         for url in urls:
+            # Stop if the specific category is full, but allow the next category to run
+            if category_articles_count >= MAX_ITEMS_PER_CATEGORY:
+                logger.info(f"Category budget full for '{category}'. Moving to next category.")
+                break
+                
+            # Stop everything if the absolute global limit is hit
             if total_articles >= MAX_TOTAL_ITEMS:
-                logger.warning("Global max article limit reached. Halting collection.")
                 break
 
             logger.info(f"Checking {url}...")
             try:
                 parsed = feedparser.parse(url)
                 
-                # Check for malformed XML safely
                 if getattr(parsed, 'bozo', False):
                     logger.warning(f"Feed {url} is malformed (bozo=True). Attempting extraction anyway.")
                     
@@ -132,20 +143,22 @@ def fetch_recent_news(feeds_dict, hours_back=48):
                     
                 feeds_success += 1
                 feed_articles_count = 0
+                
+                # Fetch source title and apply the political/editorial mapping we added earlier
                 source_title = clean_text(getattr(parsed.feed, 'title', 'Unknown Source'), limit=100)
                 profile = get_source_profile(url)
                 if profile:
                     source_title = f"{source_title} [{profile}]"
-                    
+
                 for entry in parsed.entries:
-                    if feed_articles_count >= MAX_ITEMS_PER_FEED or total_articles >= MAX_TOTAL_ITEMS:
+                    if feed_articles_count >= MAX_ITEMS_PER_FEED or category_articles_count >= MAX_ITEMS_PER_CATEGORY or total_articles >= MAX_TOTAL_ITEMS:
                         break
 
                     entry_date = get_entry_datetime(entry)
                     if not entry_date or entry_date <= cutoff:
                         continue
 
-                    # Create a stable identity key for deduplication
+                    # Deduplication
                     raw_id = entry.get("id") or entry.get("guid") or entry.get("link") or entry.get("title", "")
                     hashed_key = hashlib.sha256(raw_id.encode('utf-8')).hexdigest()
                     if hashed_key in seen_keys:
@@ -153,7 +166,7 @@ def fetch_recent_news(feeds_dict, hours_back=48):
                     seen_keys.add(hashed_key)
 
                     title = clean_text(entry.get('title'), limit=250)
-                    summary = clean_text(entry.get('summary'), limit=500)
+                    summary = clean_text(entry.get('summary'), limit=750)  # Increased for better technical context
                     link = entry.get('link', '')
 
                     if title or summary:
@@ -165,6 +178,7 @@ def fetch_recent_news(feeds_dict, hours_back=48):
                         category_output += "\n"
                         
                         feed_articles_count += 1
+                        category_articles_count += 1
                         total_articles += 1
 
             except Exception as e:
@@ -187,7 +201,7 @@ def fetch_recent_news(feeds_dict, hours_back=48):
 
     final_output = summary_stats + compiled_news
     
-    # Emergency fallback truncation (Limits should handle this gracefully first)
+    # Emergency fallback truncation
     max_chars = 200000
     if len(final_output) > max_chars:
         logger.warning(f"News volume unexpectedly high ({len(final_output)} chars). Triggering emergency truncation to prevent 429 errors.")
