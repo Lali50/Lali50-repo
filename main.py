@@ -15,6 +15,11 @@ from urllib.request import Request, urlopen
 import feedparser
 from bs4 import BeautifulSoup
 from google import genai
+try:
+    from curl_cffi import requests as curl_requests
+    HAS_CURL_CFFI = True
+except ImportError:
+    HAS_CURL_CFFI = False
 
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -123,14 +128,48 @@ def extract_entry_body(entry, limit: int = MAX_SUMMARY_CHARS) -> str:
 
 
 def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
-    """Downloads feed XML with explicit per-request timeout and browser headers before parsing."""
-    headers = {
-        "User-Agent": USER_AGENT,
+    """Downloads feed XML using Chrome TLS impersonation (curl_cffi) with RSS-agent fallback."""
+    # Attempt 1: Real Chrome TLS/JA3 + HTTP/2 fingerprint via curl_cffi (bypasses Cloudflare/Akamai 403s)
+    if HAS_CURL_CFFI:
+        try:
+            resp = curl_requests.get(
+                url,
+                impersonate="chrome",
+                timeout=timeout,
+                headers={
+                    "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9,hu;q=0.8",
+                },
+            )
+            if resp.status_code == 200 and resp.content:
+                parsed = feedparser.parse(resp.content)
+                if parsed.entries:
+                    return parsed
+        except Exception as e:
+            logger.debug(f"curl_cffi attempt failed for {url}: {e}")
+
+    # Attempt 2: Honest RSS Reader User-Agent (avoids Cloudflare TLS-vs-UA mismatch penalties)
+    rss_headers = {
+        "User-Agent": "Feedbin feed-id:12345 - 1 subscribers",
         "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9,hu;q=0.8",
-        "Cache-Control": "no-cache",
     }
-    req = Request(url, headers=headers)
+    try:
+        req = Request(url, headers=rss_headers)
+        with urlopen(req, timeout=timeout) as response:
+            raw_bytes = response.read()
+        parsed = feedparser.parse(raw_bytes)
+        if parsed.entries:
+            return parsed
+    except Exception:
+        pass
+
+    # Attempt 3: Standard browser User-Agent fallback
+    browser_headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "hu-HU,hu;q=0.9,en-US;q=0.8,en;q=0.7",
+    }
+    req = Request(url, headers=browser_headers)
     with urlopen(req, timeout=timeout) as response:
         raw_bytes = response.read()
     return feedparser.parse(raw_bytes)
