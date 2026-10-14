@@ -8,7 +8,8 @@ import socket
 import sys
 import time
 from datetime import datetime, timedelta, timezone
-from time import mktime
+from calendar import timegm
+from datetime import date
 from urllib.parse import urlparse
 
 import feedparser
@@ -67,7 +68,7 @@ def get_entry_datetime(entry):
     parsed = entry.get("published_parsed") or entry.get("updated_parsed")
     if not parsed:
         return None
-    return datetime.fromtimestamp(mktime(parsed), tz=timezone.utc)
+    return datetime.fromtimestamp(timegm(parsed), tz=timezone.utc)
 
 
 def clean_text(value: str | None, limit: int = 500) -> str:
@@ -146,8 +147,8 @@ def get_yesterdays_memory(filepath: str = "yesterday.md") -> str:
 # RSS HARVESTING & DEDUPLICATION
 # ==============================================================================
 
-def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> str:
-    """Aggregates RSS entries with category budgets and SHA-256 deduplication."""
+def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]:
+    """Aggregates RSS entries and returns (news_corpus, health_stats_markdown)."""
     logger.info(f"Fetching RSS feeds from the last {hours_back} hours...")
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours_back)
 
@@ -156,6 +157,7 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> str:
     total_articles = 0
     feeds_success = 0
     feeds_failed = 0
+    failed_domains = set()
 
     for category, urls in feeds_dict.items():
         if total_articles >= MAX_TOTAL_ITEMS:
@@ -177,43 +179,33 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> str:
                 parsed = feedparser.parse(url)
 
                 if getattr(parsed, "bozo", False) and not parsed.entries:
-                    logger.warning(f"Feed {url} malformed and empty. Skipping.")
                     feeds_failed += 1
+                    failed_domains.add(urlparse(url).netloc)
                     continue
 
                 if not parsed.entries:
                     feeds_failed += 1
+                    failed_domains.add(urlparse(url).netloc)
                     continue
 
                 feeds_success += 1
                 feed_articles_count = 0
-                source_title = clean_text(
-                    getattr(parsed.feed, "title", "Unknown Source"),
-                    limit=100
-                )
+                source_title = clean_text(getattr(parsed.feed, "title", "Unknown Source"), limit=100)
                 profile = get_source_profile(url)
                 if profile:
                     source_title = f"{source_title} [{profile}]"
 
                 for entry in parsed.entries:
-                    if (
-                        feed_articles_count >= MAX_ITEMS_PER_FEED
-                        or category_articles_count >= MAX_ITEMS_PER_CATEGORY
-                        or total_articles >= MAX_TOTAL_ITEMS
-                    ):
+                    if (feed_articles_count >= MAX_ITEMS_PER_FEED or 
+                        category_articles_count >= MAX_ITEMS_PER_CATEGORY or 
+                        total_articles >= MAX_TOTAL_ITEMS):
                         break
 
                     entry_date = get_entry_datetime(entry)
                     if not entry_date or entry_date <= cutoff:
                         continue
 
-                    # Stable identity hashing for deduplication
-                    raw_id = (
-                        entry.get("id")
-                        or entry.get("guid")
-                        or entry.get("link")
-                        or entry.get("title", "")
-                    )
+                    raw_id = entry.get("id") or entry.get("guid") or entry.get("link") or entry.get("title", "")
                     hashed_key = hashlib.sha256(raw_id.encode("utf-8")).hexdigest()
                     if hashed_key in seen_keys:
                         continue
@@ -224,13 +216,20 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> str:
                     link = entry.get("link", "")
 
                     if title or summary:
-                        category_output += f"- SOURCE: {source_title}\n  TITLE: {title}\n"
+                        article_text = f"- SOURCE: {source_title}\n  TITLE: {title}\n"
                         if summary:
-                            category_output += f"  SUMMARY: {summary}\n"
+                            article_text += f"  SUMMARY: {summary}\n"
                         if link:
-                            category_output += f"  LINK: {link}\n"
-                        category_output += "\n"
+                            article_text += f"  LINK: {link}\n"
+                        article_text += "\n"
 
+                        # Drop article completely if appending it exceeds emergency limits
+                        if len(compiled_news) + len(category_output) + len(article_text) > MAX_EMERGENCY_PROMPT_CHARS:
+                            logger.warning("Emergency length limit reached. Halting article collection safely.")
+                            total_articles = MAX_TOTAL_ITEMS 
+                            break
+
+                        category_output += article_text
                         feed_articles_count += 1
                         category_articles_count += 1
                         total_articles += 1
@@ -238,27 +237,30 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> str:
             except Exception as e:
                 logger.error(f"Error parsing {url}: {e}")
                 feeds_failed += 1
+                failed_domains.add(urlparse(url).netloc)
 
         if category_output.strip():
             compiled_news += f"\n### CATEGORY: {category} ###\n{category_output}"
 
+    # Build internal stats for prompt
     summary_stats = (
         f"TOTAL RECENT ARTICLES COLLECTED: {total_articles}\n"
         f"FEEDS PROCESSED SUCCESSFULLY: {feeds_success}\n"
         f"FEEDS FAILED: {feeds_failed}\n"
     )
+    
+    # Build human-readable stats for Apple Notes
+    health_md = (
+        f"\n\n---\n### 📡 Collection Health\n"
+        f"- **Successful Feeds:** {feeds_success}\n"
+        f"- **Failed Feeds:** {feeds_failed}\n"
+    )
+    if failed_domains:
+        health_md += f"- **Failed Sources:** {', '.join(failed_domains)}\n"
 
     logger.info(f"Collection complete: {total_articles} articles across categories.")
-
-    if not compiled_news.strip():
-        return summary_stats + "\nNo new articles found."
-
-    final_output = summary_stats + compiled_news
-    if len(final_output) > MAX_EMERGENCY_PROMPT_CHARS:
-        logger.warning("Triggering emergency buffer truncation at 200,000 characters.")
-        final_output = final_output[:MAX_EMERGENCY_PROMPT_CHARS] + "\n\n...[TRUNCATED]..."
-
-    return final_output
+    final_output = summary_stats + compiled_news if compiled_news.strip() else summary_stats + "\nNo new articles found."
+    return final_output, health_md
 
 
 # ==============================================================================
@@ -396,7 +398,7 @@ Exact JSON structure required:
 
 def parse_and_route_output(raw_output: str):
     """Splits Markdown text from the structured JSON code block."""
-    json_match = re.search(r"```json\s*(\{.*?\})\s*```", raw_output, re.DOTALL)
+    json_match = re.search(r"```json\s*(.*?)\s*```", raw_output, re.DOTALL)
 
     if not json_match:
         logger.warning("No JSON payload block detected. Saving raw response as Markdown.")
@@ -419,17 +421,19 @@ def update_campaigns(campaigns: list, filepath: str = "active_campaigns.json"):
     if not isinstance(campaigns, list):
         return
 
-    cutoff_date = (
-        datetime.now(timezone.utc) - timedelta(days=CAMPAIGN_PRUNE_DAYS)
-    ).strftime("%Y-%m-%d")
+    cutoff_date = (datetime.now(timezone.utc) - timedelta(days=CAMPAIGN_PRUNE_DAYS)).date()
 
     active_pool = []
     for campaign in campaigns:
-        last_seen = campaign.get("last_seen", "1970-01-01")
-        if last_seen >= cutoff_date:
+        try:
+            last_seen_date = date.fromisoformat(campaign.get("last_seen", "1970-01-01"))
+            if last_seen_date >= cutoff_date:
+                active_pool.append(campaign)
+            else:
+                logger.info(f"Pruned stale campaign: {campaign.get('name')}")
+        except ValueError:
+            logger.warning(f"Invalid date format in campaign '{campaign.get('name')}'. Retaining for safety.")
             active_pool.append(campaign)
-        else:
-            logger.info(f"Pruned stale campaign: {campaign.get('name')}")
 
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(active_pool, f, indent=2, ensure_ascii=False)
@@ -462,7 +466,7 @@ if __name__ == "__main__":
     campaigns_data = load_json_file("active_campaigns.json", default_value=[])
     memory_data = get_yesterdays_memory("yesterday.md")
 
-    news_data = fetch_recent_news(feeds_config, hours_back=48)
+    news_data, health_md = fetch_recent_news(feeds_config, hours_back=48)
 
     try:
         raw_response = generate_briefing(
@@ -473,9 +477,12 @@ if __name__ == "__main__":
         )
         briefing_md, updated_campaigns, ledger_entry = parse_and_route_output(raw_response)
 
+        # Append collection health reporting safely to the end of the markdown briefing
+        final_briefing_md = briefing_md + health_md
+
         # 1. Save human-facing deliverables (Apple Notes reads briefing.md)
-        save_text_file(briefing_md, "briefing.md")
-        save_text_file(briefing_md, "yesterday.md")
+        save_text_file(final_briefing_md, "briefing.md")
+        save_text_file(final_briefing_md, "yesterday.md")
 
         # 2. Persist state and machine-readable data
         if updated_campaigns is not None:
