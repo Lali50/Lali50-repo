@@ -38,6 +38,9 @@ A jelenlegit verzió stabil, kiküldésre is kerül és megfelel az alapkövetel
 
 Az jelentés angolul érkezik, ennek egyszerű oka van: reggel, este egyébként is olvasok magyarul, viszont angol nyelven változó hogy mennyit tudok egy nap, viszont szeretném szinten tartani a tudásomat. Mivel a Gemini képes lenne magyarul is megírni a jelentést, így ennek megváltoztatása nem lenne nagy feladat. 
 
+Update 10.14 9:00: Rossz időformátum volt megadva, így fennállt a lehetőség hogy bizonyos cikkek kiestek a 48 órás keresésből, annak ellenére, hogy még azon belül voltak. Ez javítva lett, más módszerrel dolgozza fel a cikkek megjelenési idejét.
+
+
 
 
   
