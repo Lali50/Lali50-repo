@@ -4,7 +4,7 @@
     "first_seen": "2026-10-12",
     "last_seen": "2026-10-14",
     "status": "active",
-    "summary": "Coordinated Russian intelligence operations conducting arson, maritime drone strikes, targeted assassination plots, and Starlink ground station sabotage across Poland, the Baltics, and the Black Sea littoral.",
+    "summary": "Coordinated Russian intelligence operations conducting arson, maritime drone strikes, critical satellite communications sabotage, and high-level political targeting across Poland, the Baltics, and the Black Sea littoral.",
     "actors": [
       "Russian Intelligence (GRU/FSB Proxy Networks)"
     ],
@@ -20,7 +20,7 @@
     "first_seen": "2026-10-13",
     "last_seen": "2026-10-14",
     "status": "active",
-    "summary": "Threat actors exploiting an unauthenticated three-flaw zero-day chain (including CVE-2026-104935) to obtain remote root code execution on edge VPN gateways.",
+    "summary": "Threat actors weaponizing an unauthenticated three-vulnerability chain (including CVE-2026-104935) to secure remote root command execution on perimeter VPN appliances.",
     "actors": [
       "Unattributed APT"
     ],
@@ -43,6 +43,21 @@
       "Information Technology",
       "Software Engineering",
       "Defense Industrial Base"
+    ]
+  },
+  {
+    "name": "Commercial BMS and Cold-Chain Disruption Campaign",
+    "first_seen": "2026-10-13",
+    "last_seen": "2026-10-14",
+    "status": "active",
+    "summary": "Systematic targeting of retail cold-chain refrigeration networks via default and predictable credential schemes in building management controllers.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Retail Logistics",
+      "Commercial Infrastructure",
+      "Food Supply"
     ]
   }
 ]
