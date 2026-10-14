@@ -1,1 +1,48 @@
-[]
+[
+  {
+    "name": "Russian CEE Kinetic and Sabotage Campaign",
+    "first_seen": "2026-10-12",
+    "last_seen": "2026-10-14",
+    "status": "active",
+    "summary": "Coordinated Russian intelligence operations conducting arson, maritime drone strikes, targeted assassination plots, and Starlink ground station sabotage across Poland, the Baltics, and the Black Sea littoral.",
+    "actors": [
+      "Russian Intelligence (GRU/FSB Proxy Networks)"
+    ],
+    "sectors": [
+      "Maritime Logistics",
+      "Telecommunications",
+      "Government Leadership",
+      "Commercial Infrastructure"
+    ]
+  },
+  {
+    "name": "Ivanti Connect Secure Zero-Day Exploitation Cluster",
+    "first_seen": "2026-10-13",
+    "last_seen": "2026-10-14",
+    "status": "active",
+    "summary": "Threat actors exploiting an unauthenticated three-flaw zero-day chain (including CVE-2026-104935) to obtain remote root code execution on edge VPN gateways.",
+    "actors": [
+      "Unattributed APT"
+    ],
+    "sectors": [
+      "Enterprise IT",
+      "Critical Infrastructure",
+      "Government"
+    ]
+  },
+  {
+    "name": "DPRK Remote Worker Infiltration (Operation Lonestar Roundup)",
+    "first_seen": "2026-10-13",
+    "last_seen": "2026-10-14",
+    "status": "active",
+    "summary": "State-sponsored identity theft and laptop farm rings placing DPRK software developers inside Western tech enterprises to funnel revenue and exfiltrate IP.",
+    "actors": [
+      "DPRK State Actors"
+    ],
+    "sectors": [
+      "Information Technology",
+      "Software Engineering",
+      "Defense Industrial Base"
+    ]
+  }
+]
