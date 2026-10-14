@@ -266,7 +266,8 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
 # ==============================================================================
 
 def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
-   api_key = os.environ.get("GEMINI_API_KEY")
+  
+    api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
         sys.exit(1)
@@ -280,10 +281,10 @@ def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, pr
         "gemini-3.6-flash",
         "gemini-3.5-flash"
     ]
-    
 
     base_delays = [5, 10, 15]
 
+   
     for attempt, current_model in enumerate(fallback_models):
         logger.info(f"Querying API (Attempt {attempt + 1}/{len(fallback_models)}) using: {current_model}")
         
@@ -304,7 +305,7 @@ def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, pr
             error_msg = str(e).lower()
             logger.warning(f"Failed with {current_model}: {e}")
 
-            # Treat "404 not found" as transient in case an older model version was retired
+            
             is_transient = any(
                 k in error_msg
                 for k in ["429", "500", "502", "503", "504", "quota", "rate limit", "unavailable", "not found"]
