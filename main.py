@@ -15,17 +15,15 @@ from urllib.parse import urlparse
 import feedparser
 from bs4 import BeautifulSoup
 from google import genai
+feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-# ==============================================================================
-# PIPELINE CONFIGURATION & RUNTIME LIMITS
-# ==============================================================================
 
 socket.setdefaulttimeout(10)
 
-MAX_ITEMS_PER_FEED = 8
-MAX_ITEMS_PER_CATEGORY = 45
-MAX_TOTAL_ITEMS = 180
-MAX_SUMMARY_CHARS = 750
+MAX_ITEMS_PER_FEED = 10
+MAX_ITEMS_PER_CATEGORY = 75
+MAX_TOTAL_ITEMS = 250
+MAX_SUMMARY_CHARS = 1000
 MAX_EMERGENCY_PROMPT_CHARS = 200000
 CAMPAIGN_PRUNE_DAYS = 30
 
