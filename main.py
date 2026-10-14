@@ -369,39 +369,59 @@ Exact JSON structure required:
 </untrusted_news_data>
 """
 
-    logger.info(f"Querying Gemini API with model: {model_name}")
+  retries_per_model = 2
+    base_delays = [5, 12]
+    last_error = None
 
-    max_retries = 4
-    base_delays = [5, 10, 20, 40]
+    for model_name in model_cascade:
+        logger.info(f"Querying Gemini API with model: {model_name}")
 
-    for attempt in range(max_retries):
-        try:
-            chat = client.chats.create(model=model_name)
-            response = chat.send_message(prompt)
+        for attempt in range(retries_per_model):
+            try:
+                chat = client.chats.create(model=model_name)
+                response = chat.send_message(prompt)
 
-            if not response or not response.text or not response.text.strip():
-                reason = "Unknown"
-                if hasattr(response, "candidates") and response.candidates:
-                    reason = getattr(response.candidates[0], "finish_reason", "Unknown")
-                raise RuntimeError(f"Gemini returned an empty response. Finish Reason: {reason}")
+                if not response or not response.text or not response.text.strip():
+                    reason = "Unknown"
+                    if hasattr(response, "candidates") and response.candidates:
+                        reason = getattr(response.candidates[0], "finish_reason", "Unknown")
+                    raise RuntimeError(f"Gemini ({model_name}) returned an empty response. Finish Reason: {reason}")
 
-            return response.text
+                logger.info(f"Successfully generated briefing using {model_name} (attempt {attempt + 1}).")
+                return response.text
 
-        except Exception as e:
-            error_msg = str(e).lower()
-            logger.error(f"Inference attempt {attempt + 1} failed: {e}")
+            except Exception as e:
+                last_error = e
+                error_msg = str(e).lower()
+                logger.warning(f"Model '{model_name}' attempt {attempt + 1}/{retries_per_model} failed: {e}")
 
-            is_transient = any(
-                k in error_msg
-                for k in ["429", "500", "502", "503", "504", "quota", "rate limit", "unavailable"]
-            )
+                is_transient = any(
+                    k in error_msg
+                    for k in [
+                        "429", "500", "502", "503", "504",
+                        "quota", "rate limit", "unavailable", "overloaded", "resource_exhausted"
+                    ]
+                )
+                is_model_not_found = "404" in error_msg or "not found" in error_msg
 
-            if is_transient and attempt < max_retries - 1:
-                wait_time = min(base_delays[attempt] + random.uniform(0, 3), 60)
-                logger.info(f"Transient error detected. Retrying in {wait_time:.2f} seconds...")
-                time.sleep(wait_time)
-            else:
-                raise RuntimeError(f"Gemini API failed after {attempt + 1} attempts: {e}")
+                # If model name is invalid/unavailable in tier, immediately step down to next model
+                if is_model_not_found:
+                    logger.warning(f"Model '{model_name}' not found or inaccessible. Stepping down immediately...")
+                    break
+
+                if is_transient:
+                    if attempt < retries_per_model - 1:
+                        wait_time = base_delays[attempt] + random.uniform(0, 3)
+                        logger.info(f"Transient error on '{model_name}'. Retrying same model in {wait_time:.2f}s...")
+                        time.sleep(wait_time)
+                    else:
+                        logger.warning(f"Exhausted retries for '{model_name}'. Stepping down to next fallback model...")
+                        time.sleep(2)
+                else:
+                    # Non-transient error (e.g., bad API key or malformed request)
+                    raise RuntimeError(f"Fatal non-transient Gemini API error on {model_name}: {e}")
+
+    raise RuntimeError(f"All fallback models ({', '.join(model_cascade)}) failed. Last error: {last_error}")
 
 
 # ==============================================================================
