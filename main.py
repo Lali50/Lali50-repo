@@ -266,14 +266,28 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
 # ==============================================================================
 
 def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
-    """Executes single-turn synthesis with exponential backoff and dual output formatting."""
+    def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
+    """Executes single-turn synthesis with model fallback cascade and exponential backoff."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
         sys.exit(1)
 
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
     client = genai.Client(api_key=api_key)
+
+    default_cascade = [
+        "gemini-3.8-flash",
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3-flash",
+    ]
+    
+
+    env_model = os.environ.get("GEMINI_MODEL")
+    if env_model:
+        model_cascade = [env_model] + [m for m in default_cascade if m != env_model]
+    else:
+        model_cascade = default_cascade
 
     # Optional dynamic profile targeting block
     profile_instructions = ""
