@@ -40,6 +40,8 @@ Az jelentés angolul érkezik, ennek egyszerű oka van: reggel, este egyébként
 
 Update 10.14 9:00: Rossz időformátum volt megadva, így fennállt a lehetőség hogy bizonyos cikkek kiestek a 48 órás keresésből, annak ellenére, hogy még azon belül voltak. Ez javítva lett, más módszerrel dolgozza fel a cikkek megjelenési idejét.
 
+Update 10.14 9:15: 1.: A reggeli jelentés cca. 40k tokent használt fel, ez még mindig bőven a korlát alatt van, így a keresési limiteket megnöveltem, hogy kategóriánként több cikket tudjon feldolgozni, hosszabb jelentést készíthessen. 
+2.: Több oldal is hibaüzenetet dob fel, amikor a feedparser megpróbál hozzáférni. Ezért hozzáadásra került egy sor mely elméletben álcázza a szkriptet, úgy mintha egy böngészőből lett volna indítva a keresés. 
 
 
 
