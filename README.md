@@ -45,4 +45,9 @@ Update 10.14 9:15: 1.: A reggeli jelentés cca. 40k tokent használt fel, ez mé
 
 Update 10.14 12:00: Mivel elég zavaró, hogy program rengetegszer nem éri el a legfrissebb gemini API-t (3.8-flash ebben az esetben, ez a legjobb amit az előfizetésem tud), ezért beépítésre került egy megoldás. Amennyiben nem éri el a legfrissebb modellt, vélt egy régebbire, illetve ha azt sem akkor egy még régebbire. Mivel nem a legbonyolultabb feladat amit el kell végeznie, ezért a "régiebbi" egyáltalán nem biztos hogy érzékelhetően rosszabb megoldást adna, ez egyfajta biztosításként lett beépítve, mivel napközben amikor dolgoznék a projekten, nagyon sokszor érkezik 503-as hibakód. 
 
+Update 10.14 12:45: Megint egy nagyobb változtatási csomag, Gemini Argon modell segítségével: 
+1. Limitek ismét növelve, így már egy lekérdezés cca. 75 ezer token, még mindig bőven a 250 ezres limit alatt.
+2. Substackek-nél bővebb elemzési paraméterek, ne csak a 'summary'-t gyűjtse össze.
+3. A hírkategóriákon belül ki lett alakítva egy rendszer, hogy vegye figyelembe mindegyik hírportált, ne üsse meg a limitet rögtön az elsőnél, így mindegyik oldalról be tudja gyűjteni a friss és releváns hírt. Példa: eddig a magyar hírek kategóriában a telex-et kérdezte le először, volt arra példa, hogy ezzel meg is ütötte a limitet így az NKI, MNB és többiek hírei nem jutottak el az elemzésig.
+4. A jelentés végére odakerül egy technikai rész is, ami az elemzés menetéről (cikkszámok, használt modell, sikertelen lekérdezés, etc.) szól. Így látom, hogy a reggeli jelentésben melyik híroldalt nem sikerült elérni, el tudom dönteni hogy akkor azt vagy elolvasom a jelentésen kívül, vagy újrafuttatom a jelentést. Ez a technikai lenyomat nem kerül be 'yesterday.md'-be. 
   
