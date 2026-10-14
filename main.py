@@ -7,16 +7,15 @@ import re
 import socket
 import sys
 import time
-from datetime import datetime, timedelta, timezone
 from calendar import timegm
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 import feedparser
 from bs4 import BeautifulSoup
 from google import genai
-feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
+feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 socket.setdefaulttimeout(10)
 
@@ -266,7 +265,6 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
 # ==============================================================================
 
 def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
-    def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
     """Executes single-turn synthesis with model fallback cascade and exponential backoff."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
@@ -275,14 +273,15 @@ def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, pr
 
     client = genai.Client(api_key=api_key)
 
+    # Define the fallback cascade order
     default_cascade = [
         "gemini-3.8-flash",
         "gemini-3.7-flash",
         "gemini-3.6-flash",
         "gemini-3-flash",
     ]
-    
 
+    # Allow GEMINI_MODEL env var to override the primary model while keeping fallbacks
     env_model = os.environ.get("GEMINI_MODEL")
     if env_model:
         model_cascade = [env_model] + [m for m in default_cascade if m != env_model]
@@ -328,6 +327,7 @@ If an article relates to any monitored assets, prominently flag it and assign an
         }
     }
 
+    code_fence = chr(96) * 3
     prompt = f"""
 You are an elite intelligence analyst specializing in cybersecurity, geopolitics, and geoeconomics, focusing on Hungary and the CEE region.
 
@@ -352,9 +352,9 @@ Immediately after the Markdown briefing, provide a strictly valid JSON block enc
 2. "ledger_entry": Structured single-day indexing record.
 
 Exact JSON structure required:
-```json
+{code_fence}json
 {json.dumps(json_template, indent=2)}
-```
+{code_fence}
 
 <yesterday_briefing>
 {memory_data}
@@ -369,7 +369,7 @@ Exact JSON structure required:
 </untrusted_news_data>
 """
 
-  retries_per_model = 2
+    retries_per_model = 2
     base_delays = [5, 12]
     last_error = None
 
@@ -404,7 +404,6 @@ Exact JSON structure required:
                 )
                 is_model_not_found = "404" in error_msg or "not found" in error_msg
 
-                # If model name is invalid/unavailable in tier, immediately step down to next model
                 if is_model_not_found:
                     logger.warning(f"Model '{model_name}' not found or inaccessible. Stepping down immediately...")
                     break
@@ -418,7 +417,6 @@ Exact JSON structure required:
                         logger.warning(f"Exhausted retries for '{model_name}'. Stepping down to next fallback model...")
                         time.sleep(2)
                 else:
-                    # Non-transient error (e.g., bad API key or malformed request)
                     raise RuntimeError(f"Fatal non-transient Gemini API error on {model_name}: {e}")
 
     raise RuntimeError(f"All fallback models ({', '.join(model_cascade)}) failed. Last error: {last_error}")
