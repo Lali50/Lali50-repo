@@ -15,18 +15,17 @@ import feedparser
 from bs4 import BeautifulSoup
 from google import genai
 
-# Disguise the scraper to bypass Substack and CISA anti-bot protection
-feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-
-# ==============================================================================
-# PIPELINE CONFIGURATION & RUNTIME LIMITS
-# ==============================================================================
+feedparser.USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/120.0.0.0 Safari/537.36"
+)
 
 socket.setdefaulttimeout(10)
 
-MAX_ITEMS_PER_FEED = 15
-MAX_ITEMS_PER_CATEGORY = 80
-MAX_TOTAL_ITEMS = 300
+MAX_ITEMS_PER_FEED = 10
+MAX_ITEMS_PER_CATEGORY = 75
+MAX_TOTAL_ITEMS = 250
 MAX_SUMMARY_CHARS = 1000
 MAX_EMERGENCY_PROMPT_CHARS = 200000
 CAMPAIGN_PRUNE_DAYS = 30
@@ -53,19 +52,18 @@ SOURCE_PROFILES = {
     "hwsw.hu": "Tech & IT Industry",
 }
 
-# ==============================================================================
-# TEXT SANITIZATION & METADATA EXTRACTION
-# ==============================================================================
 
 def get_source_profile(url: str) -> str:
     domain = urlparse(url).netloc.lower().removeprefix("www.")
     return SOURCE_PROFILES.get(domain, "")
+
 
 def get_entry_datetime(entry):
     parsed = entry.get("published_parsed") or entry.get("updated_parsed")
     if not parsed:
         return None
     return datetime.fromtimestamp(timegm(parsed), tz=timezone.utc)
+
 
 def clean_text(value: str | None, limit: int = 500) -> str:
     if not value:
@@ -74,9 +72,6 @@ def clean_text(value: str | None, limit: int = 500) -> str:
     text = " ".join(soup.get_text(separator=" ").split())
     return text[:limit] + "..." if len(text) > limit else text
 
-# ==============================================================================
-# CONFIGURATION & STATE PERSISTENCE LOADERS
-# ==============================================================================
 
 def load_feeds_config(filepath: str = "feeds.json") -> dict:
     try:
@@ -104,6 +99,7 @@ def load_feeds_config(filepath: str = "feeds.json") -> dict:
         logger.error(f"Error loading {filepath}: {e}")
         sys.exit(1)
 
+
 def load_profile(filepath: str = "profile.json") -> dict:
     default = {"enabled": False}
     try:
@@ -113,12 +109,14 @@ def load_profile(filepath: str = "profile.json") -> dict:
     except FileNotFoundError:
         return default
 
+
 def load_json_file(filepath: str, default_value):
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return default_value
+
 
 def get_yesterdays_memory(filepath: str = "yesterday.md") -> str:
     try:
@@ -128,9 +126,6 @@ def get_yesterdays_memory(filepath: str = "yesterday.md") -> str:
     except FileNotFoundError:
         return "No previous briefing found."
 
-# ==============================================================================
-# RSS HARVESTING & DEDUPLICATION
-# ==============================================================================
 
 def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]:
     logger.info(f"Fetching RSS feeds from the last {hours_back} hours...")
@@ -180,16 +175,23 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
                     source_title = f"{source_title} [{profile}]"
 
                 for entry in parsed.entries:
-                    if (feed_articles_count >= MAX_ITEMS_PER_FEED or 
-                        category_articles_count >= MAX_ITEMS_PER_CATEGORY or 
-                        total_articles >= MAX_TOTAL_ITEMS):
+                    if (
+                        feed_articles_count >= MAX_ITEMS_PER_FEED
+                        or category_articles_count >= MAX_ITEMS_PER_CATEGORY
+                        or total_articles >= MAX_TOTAL_ITEMS
+                    ):
                         break
 
                     entry_date = get_entry_datetime(entry)
                     if not entry_date or entry_date <= cutoff:
                         continue
 
-                    raw_id = entry.get("id") or entry.get("guid") or entry.get("link") or entry.get("title", "")
+                    raw_id = (
+                        entry.get("id")
+                        or entry.get("guid")
+                        or entry.get("link")
+                        or entry.get("title", "")
+                    )
                     hashed_key = hashlib.sha256(raw_id.encode("utf-8")).hexdigest()
                     if hashed_key in seen_keys:
                         continue
@@ -207,9 +209,12 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
                             article_text += f"  LINK: {link}\n"
                         article_text += "\n"
 
-                        if len(compiled_news) + len(category_output) + len(article_text) > MAX_EMERGENCY_PROMPT_CHARS:
+                        if (
+                            len(compiled_news) + len(category_output) + len(article_text)
+                            > MAX_EMERGENCY_PROMPT_CHARS
+                        ):
                             logger.warning("Emergency length limit reached. Halting article collection safely.")
-                            total_articles = MAX_TOTAL_ITEMS 
+                            total_articles = MAX_TOTAL_ITEMS
                             break
 
                         category_output += article_text
@@ -230,7 +235,7 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
         f"FEEDS PROCESSED SUCCESSFULLY: {feeds_success}\n"
         f"FEEDS FAILED: {feeds_failed}\n"
     )
-    
+
     health_md = (
         f"\n\n---\n### 📡 Collection Health\n"
         f"- **Successful Feeds:** {feeds_success}\n"
@@ -240,15 +245,59 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
         health_md += f"- **Failed Sources:** {', '.join(failed_domains)}\n"
 
     logger.info(f"Collection complete: {total_articles} articles across categories.")
-    final_output = summary_stats + compiled_news if compiled_news.strip() else summary_stats + "\nNo new articles found."
+    final_output = (
+        summary_stats + compiled_news if compiled_news.strip() else summary_stats + "\nNo new articles found."
+    )
     return final_output, health_md
 
 
-# ==============================================================================
-# GEMINI SYNTHESIS & INFERENCE
-# ==============================================================================
-
 def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
+    # --- TEST MODE / DRY RUN BYPASS ---
+    fences = chr(96) * 3  # Dynamically generated triple-backtick to prevent UI rendering bugs
+
+    if os.environ.get("TEST_MODE", "").lower() == "true":
+        logger.info("TEST_MODE detected. Returning mock briefing and test state payload.")
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        return f"""## 1. The Macro Picture (Geopolitics & Geoeconomics)
+[TEST MODE] Mock regional macro summary.
+
+## 2. Critical Infrastructure & ICS Threat Landscape
+[TEST MODE] Mock ICS advisory review.
+
+## 3. Hungarian Cyber & Tech Sector
+[TEST MODE] Mock domestic media narrative review.
+
+## 4. Global Cybercrime & APT Activity
+[TEST MODE] Mock global threat monitoring.
+
+## 5. Recommended Deep Dives
+- [TEST LINK] Mock research link.
+
+{fences}json
+{{
+  "active_campaigns": [
+    {{
+      "name": "Test Simulation Cluster",
+      "first_seen": "{today_str}",
+      "last_seen": "{today_str}",
+      "status": "active",
+      "summary": "Mock campaign entry for dry-run verification.",
+      "actors": ["TestActor"],
+      "sectors": ["Testing"]
+    }}
+  ],
+  "ledger_entry": {{
+    "date": "{today_str}",
+    "threat_actors": ["TestActor"],
+    "targeted_sectors": ["Testing"],
+    "cves_mentioned": ["CVE-2026-0000"],
+    "macro_summary": "Dry run verification completed successfully.",
+    "regional_risk_level": "Low",
+    "notable_hungarian_topics": ["Pipeline Test"]
+  }}
+}}
+{fences}"""
+
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
@@ -279,7 +328,7 @@ If an article relates to any monitored assets, prominently flag it and assign an
                 "status": "active",
                 "summary": "1-2 sentence status summary",
                 "actors": ["Actor1"],
-                "sectors": ["Sector1"]
+                "sectors": ["Sector1"],
             }
         ],
         "ledger_entry": {
@@ -289,9 +338,11 @@ If an article relates to any monitored assets, prominently flag it and assign an
             "cves_mentioned": [],
             "macro_summary": "One sentence summary of macro developments",
             "regional_risk_level": "Low | Moderate | Elevated | High",
-            "notable_hungarian_topics": []
-        }
+            "notable_hungarian_topics": [],
+        },
     }
+
+    json_spec = f"{fences}json\n{json.dumps(json_template, indent=2)}\n{fences}"
 
     prompt = f"""
 You are an elite intelligence analyst specializing in cybersecurity, geopolitics, and geoeconomics, focusing on Hungary and the CEE region.
@@ -317,5 +368,149 @@ Immediately after the Markdown briefing, provide a strictly valid JSON block enc
 2. "ledger_entry": Structured single-day indexing record.
 
 Exact JSON structure required:
-```json
-{json.dumps(json_template, indent=2)}
+{json_spec}
+
+<yesterday_briefing>
+{memory_data}
+</yesterday_briefing>
+
+<active_campaigns>
+{json.dumps(campaigns_data, indent=2)}
+</active_campaigns>
+
+<untrusted_news_data>
+{news_data}
+</untrusted_news_data>
+"""
+
+    fallback_models = [
+        os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"),
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+    ]
+
+    base_delays = [5, 10, 15]
+
+    for attempt, current_model in enumerate(fallback_models):
+        logger.info(f"Querying API (Attempt {attempt + 1}/{len(fallback_models)}) using: {current_model}")
+
+        try:
+            chat = client.chats.create(model=current_model)
+            response = chat.send_message(prompt)
+
+            if not response or not response.text or not response.text.strip():
+                reason = "Unknown"
+                if hasattr(response, "candidates") and response.candidates:
+                    reason = getattr(response.candidates[0], "finish_reason", "Unknown")
+                raise RuntimeError(f"Model {current_model} returned an empty response. Finish Reason: {reason}")
+
+            logger.info(f"Successfully generated briefing using {current_model}.")
+            return response.text
+
+        except Exception as e:
+            error_msg = str(e).lower()
+            logger.warning(f"Failed with {current_model}: {e}")
+
+            is_transient = any(
+                k in error_msg
+                for k in ["429", "500", "502", "503", "504", "quota", "rate limit", "unavailable", "not found"]
+            )
+
+            if is_transient and attempt < len(fallback_models) - 1:
+                wait_time = base_delays[attempt] + random.uniform(0, 2)
+                logger.info(f"Switching to fallback model in {wait_time:.2f} seconds...")
+                time.sleep(wait_time)
+            elif attempt == len(fallback_models) - 1:
+                raise RuntimeError(f"All Gemini fallback models exhausted. Final error: {e}")
+            else:
+                raise RuntimeError(f"Fatal API error with {current_model}: {e}")
+
+
+def parse_and_route_output(raw_output: str):
+    json_match = re.search(r"```json\s*(.*?)\s*```", raw_output, re.DOTALL)
+
+    if not json_match:
+        logger.warning("No JSON payload block detected. Saving raw response as Markdown.")
+        return raw_output.strip(), None, None
+
+    markdown_content = raw_output[:json_match.start()].strip()
+
+    try:
+        payload = json.loads(json_match.group(1))
+        updated_campaigns = payload.get("active_campaigns", [])
+        ledger_entry = payload.get("ledger_entry", {})
+        return markdown_content, updated_campaigns, ledger_entry
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to decode embedded JSON payload: {e}")
+        return markdown_content, None, None
+
+
+def update_campaigns(campaigns: list, filepath: str = "active_campaigns.json"):
+    if not isinstance(campaigns, list):
+        return
+
+    cutoff_date = (datetime.now(timezone.utc) - timedelta(days=CAMPAIGN_PRUNE_DAYS)).date()
+
+    active_pool = []
+    for campaign in campaigns:
+        try:
+            last_seen_date = date.fromisoformat(campaign.get("last_seen", "1970-01-01"))
+            if last_seen_date >= cutoff_date:
+                active_pool.append(campaign)
+            else:
+                logger.info(f"Pruned stale campaign: {campaign.get('name')}")
+        except ValueError:
+            logger.warning(f"Invalid date format in campaign '{campaign.get('name')}'. Retaining for safety.")
+            active_pool.append(campaign)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(active_pool, f, indent=2, ensure_ascii=False)
+    logger.info(f"Persisted {len(active_pool)} active campaigns to {filepath}")
+
+
+def append_to_ledger(entry: dict, filepath: str = "intel_ledger.jsonl"):
+    if not isinstance(entry, dict) or not entry:
+        return
+    with open(filepath, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    logger.info(f"Appended daily record to {filepath}")
+
+
+def save_text_file(content: str, filepath: str):
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(content)
+    logger.info(f"Successfully written: {filepath}")
+
+
+if __name__ == "__main__":
+    feeds_config = load_feeds_config("feeds.json")
+    profile_data = load_profile("profile.json")
+    campaigns_data = load_json_file("active_campaigns.json", default_value=[])
+    memory_data = get_yesterdays_memory("yesterday.md")
+
+    news_data, health_md = fetch_recent_news(feeds_config, hours_back=48)
+
+    try:
+        raw_response = generate_briefing(
+            news_data,
+            memory_data,
+            campaigns_data,
+            profile_data
+        )
+        briefing_md, updated_campaigns, ledger_entry = parse_and_route_output(raw_response)
+
+        final_briefing_md = briefing_md + health_md
+
+        save_text_file(final_briefing_md, "briefing.md")
+        save_text_file(final_briefing_md, "yesterday.md")
+
+        if updated_campaigns is not None:
+            update_campaigns(updated_campaigns, "active_campaigns.json")
+
+        if ledger_entry:
+            append_to_ledger(ledger_entry, "intel_ledger.jsonl")
+
+    except Exception as e:
+        logger.error(f"Pipeline execution halted: {e}")
+        sys.exit(1)
