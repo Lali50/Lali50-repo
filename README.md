@@ -43,6 +43,6 @@ Update 10.14 9:00: Rossz időformátum volt megadva, így fennállt a lehetősé
 Update 10.14 9:15: 1.: A reggeli jelentés cca. 40k tokent használt fel, ez még mindig bőven a korlát alatt van, így a keresési limiteket megnöveltem, hogy kategóriánként több cikket tudjon feldolgozni, hosszabb jelentést készíthessen. 
 2.: Több oldal is hibaüzenetet dob fel, amikor a feedparser megpróbál hozzáférni. Ezért hozzáadásra került egy sor mely elméletben álcázza a szkriptet, úgy mintha egy böngészőből lett volna indítva a keresés. 
 
-
+Update 10.14 12:00: Mivel elég zavaró, hogy program rengetegszer nem éri el a legfrissebb gemini API-t (3.8-flash ebben az esetben, ez a legjobb amit az előfizetésem tud), ezért beépítésre került egy megoldás. Amennyiben nem éri el a legfrissebb modellt, vélt egy régebbire, illetve ha azt sem akkor egy még régebbire. Mivel nem a legbonyolultabb feladat amit el kell végeznie, ezért a "régiebbi" egyáltalán nem biztos hogy érzékelhetően rosszabb megoldást adna, ez egyfajta biztosításként lett beépítve, mivel napközben amikor dolgoznék a projekten, nagyon sokszor érkezik 503-as hibakód. 
 
   
