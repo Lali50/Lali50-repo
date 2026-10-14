@@ -266,16 +266,60 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
 # ==============================================================================
 
 def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
-    """Executes single-turn synthesis with exponential backoff and dual output formatting."""
-    api_key = os.environ.get("GEMINI_API_KEY")
+   api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
         sys.exit(1)
 
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
     client = genai.Client(api_key=api_key)
 
-    # Optional dynamic profile targeting block
+    
+    fallback_models = [
+        os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"),
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash"
+    ]
+    
+
+    base_delays = [5, 10, 15]
+
+    for attempt, current_model in enumerate(fallback_models):
+        logger.info(f"Querying API (Attempt {attempt + 1}/{len(fallback_models)}) using: {current_model}")
+        
+        try:
+            chat = client.chats.create(model=current_model)
+            response = chat.send_message(prompt)
+
+            if not response or not response.text or not response.text.strip():
+                reason = "Unknown"
+                if hasattr(response, "candidates") and response.candidates:
+                    reason = getattr(response.candidates[0], "finish_reason", "Unknown")
+                raise RuntimeError(f"Model {current_model} returned an empty response. Finish Reason: {reason}")
+
+            logger.info(f"Successfully generated briefing using {current_model}.")
+            return response.text
+
+        except Exception as e:
+            error_msg = str(e).lower()
+            logger.warning(f"Failed with {current_model}: {e}")
+
+            # Treat "404 not found" as transient in case an older model version was retired
+            is_transient = any(
+                k in error_msg
+                for k in ["429", "500", "502", "503", "504", "quota", "rate limit", "unavailable", "not found"]
+            )
+
+            if is_transient and attempt < len(fallback_models) - 1:
+                wait_time = base_delays[attempt] + random.uniform(0, 2)
+                logger.info(f"Switching to fallback model in {wait_time:.2f} seconds...")
+                time.sleep(wait_time)
+            elif attempt == len(fallback_models) - 1:
+                raise RuntimeError(f"All Gemini fallback models exhausted. Final error: {e}")
+            else:
+                raise RuntimeError(f"Fatal API error with {current_model}: {e}")
+
+   
     profile_instructions = ""
     if profile_data.get("enabled"):
         profile_instructions = f"""
@@ -290,7 +334,7 @@ If an article relates to any monitored assets, prominently flag it and assign an
 [EXPOSURE: LOW | MEDIUM | HIGH | CRITICAL]
 """
 
-    # Schema template to anchor JSON generation reliably
+    
     json_template = {
         "active_campaigns": [
             {
