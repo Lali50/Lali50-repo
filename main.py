@@ -10,20 +10,27 @@ import time
 from calendar import timegm
 from datetime import date, datetime, timedelta, timezone
 from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 import feedparser
 from bs4 import BeautifulSoup
 from google import genai
 
-feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/124.0.0.0 Safari/537.36"
+)
+feedparser.USER_AGENT = USER_AGENT
 
-socket.setdefaulttimeout(10)
+socket.setdefaulttimeout(12)
 
-MAX_ITEMS_PER_FEED = 10
-MAX_ITEMS_PER_CATEGORY = 75
-MAX_TOTAL_ITEMS = 250
-MAX_SUMMARY_CHARS = 1000
-MAX_EMERGENCY_PROMPT_CHARS = 200000
+MAX_ITEMS_PER_FEED = 20
+MAX_ITEMS_PER_CATEGORY = 150
+MAX_TOTAL_ITEMS = 500
+MAX_SUMMARY_CHARS = 3500
+MAX_EMERGENCY_PROMPT_CHARS = 600000
+FEED_REQUEST_TIMEOUT = 12
 CAMPAIGN_PRUNE_DAYS = 30
 
 logging.basicConfig(
@@ -42,6 +49,7 @@ SOURCE_PROFILES = {
     "hvg.hu": "Independent / Critical",
     "444.hu": "Independent / Critical",
     "nszo.hu": "Opposition / Left-leaning",
+    "nepszava.hu": "Opposition / Left-leaning",
     "valaszonline.hu": "Independent / Conservative Analysis",
     "atlatszo.hu": "Independent / Investigative Watchdog",
     "direkt36.hu": "Independent / Investigative Journalism",
@@ -54,18 +62,30 @@ SOURCE_PROFILES = {
 # TEXT SANITIZATION & METADATA EXTRACTION
 # ==============================================================================
 
-def get_source_profile(url: str) -> str:
-    """Returns editorial orientation tag if mapped, otherwise empty string."""
-    domain = urlparse(url).netloc.lower().removeprefix("www.")
-    return SOURCE_PROFILES.get(domain, "")
+def get_source_profile(feed_url: str, entry_link: str = "") -> str:
+    """Returns editorial orientation tag if mapped on either feed URL or article link."""
+    for candidate in (feed_url, entry_link):
+        if not candidate:
+            continue
+        domain = urlparse(candidate).netloc.lower().removeprefix("www.")
+        if domain in SOURCE_PROFILES:
+            return SOURCE_PROFILES[domain]
+    return ""
 
 
-def get_entry_datetime(entry):
-    """Safely extracts published or updated timestamps as UTC datetime."""
-    parsed = entry.get("published_parsed") or entry.get("updated_parsed")
+def get_entry_datetime(entry) -> datetime | None:
+    """Safely extracts published, updated, or created timestamps as UTC datetime."""
+    parsed = (
+        entry.get("published_parsed")
+        or entry.get("updated_parsed")
+        or entry.get("created_parsed")
+    )
     if not parsed:
         return None
-    return datetime.fromtimestamp(timegm(parsed), tz=timezone.utc)
+    try:
+        return datetime.fromtimestamp(timegm(parsed), tz=timezone.utc)
+    except (ValueError, OverflowError, TypeError):
+        return None
 
 
 def clean_text(value: str | None, limit: int = 500) -> str:
@@ -75,6 +95,45 @@ def clean_text(value: str | None, limit: int = 500) -> str:
     soup = BeautifulSoup(value, "html.parser")
     text = " ".join(soup.get_text(separator=" ").split())
     return text[:limit] + "..." if len(text) > limit else text
+
+
+def extract_entry_body(entry, limit: int = MAX_SUMMARY_CHARS) -> str:
+    """Extracts the richest available article text (preferring full content over teaser summary)."""
+    candidates = []
+
+    content_list = entry.get("content")
+    if isinstance(content_list, list):
+        for item in content_list:
+            val = item.get("value") if isinstance(item, dict) else getattr(item, "value", "")
+            if val and isinstance(val, str):
+                candidates.append(val)
+
+    for field in ("summary", "description"):
+        val = entry.get(field)
+        if val and isinstance(val, str):
+            candidates.append(val)
+
+    if not candidates:
+        return ""
+
+    # Clean each candidate without truncation first to pick the most informative block
+    cleaned_candidates = [clean_text(c, limit=limit * 2) for c in candidates]
+    best_text = max(cleaned_candidates, key=len, default="")
+    return best_text[:limit] + "..." if len(best_text) > limit else best_text
+
+
+def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
+    """Downloads feed XML with explicit per-request timeout and browser headers before parsing."""
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,hu;q=0.8",
+        "Cache-Control": "no-cache",
+    }
+    req = Request(url, headers=headers)
+    with urlopen(req, timeout=timeout) as response:
+        raw_bytes = response.read()
+    return feedparser.parse(raw_bytes)
 
 
 # ==============================================================================
@@ -141,11 +200,11 @@ def get_yesterdays_memory(filepath: str = "yesterday.md") -> str:
 
 
 # ==============================================================================
-# RSS HARVESTING & DEDUPLICATION
+# RSS HARVESTING & ROUND-ROBIN DEDUPLICATION
 # ==============================================================================
 
 def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]:
-    """Aggregates RSS entries and returns (news_corpus, health_stats_markdown)."""
+    """Aggregates RSS entries using round-robin category balancing and returns (news_corpus, health_stats_markdown)."""
     logger.info(f"Fetching RSS feeds from the last {hours_back} hours...")
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours_back)
 
@@ -155,25 +214,19 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
     feeds_success = 0
     feeds_failed = 0
     failed_domains = set()
+    emergency_stop = False
 
     for category, urls in feeds_dict.items():
-        if total_articles >= MAX_TOTAL_ITEMS:
-            logger.warning("Global max article limit reached. Halting collection.")
+        if total_articles >= MAX_TOTAL_ITEMS or emergency_stop:
+            logger.warning("Global article or prompt limit reached. Halting collection.")
             break
 
-        category_output = ""
-        category_articles_count = 0
+        # Collect valid recent entries per feed first for round-robin interleaving
+        feed_queues: list[list[str]] = []
 
         for url in urls:
-            if category_articles_count >= MAX_ITEMS_PER_CATEGORY:
-                logger.info(f"Category budget reached for '{category}'. Advancing.")
-                break
-
-            if total_articles >= MAX_TOTAL_ITEMS:
-                break
-
             try:
-                parsed = feedparser.parse(url)
+                parsed = fetch_and_parse_feed(url, timeout=FEED_REQUEST_TIMEOUT)
 
                 if getattr(parsed, "bozo", False) and not parsed.entries:
                     feeds_failed += 1
@@ -186,21 +239,22 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
                     continue
 
                 feeds_success += 1
-                feed_articles_count = 0
-                source_title = clean_text(getattr(parsed.feed, "title", "Unknown Source"), limit=100)
-                profile = get_source_profile(url)
-                if profile:
-                    source_title = f"{source_title} [{profile}]"
+                base_source_title = clean_text(getattr(parsed.feed, "title", "Unknown Source"), limit=100)
 
+                # Extract and sort valid recent entries for this feed (newest first)
+                dated_entries = []
                 for entry in parsed.entries:
-                    if (feed_articles_count >= MAX_ITEMS_PER_FEED or 
-                        category_articles_count >= MAX_ITEMS_PER_CATEGORY or 
-                        total_articles >= MAX_TOTAL_ITEMS):
-                        break
-
                     entry_date = get_entry_datetime(entry)
                     if not entry_date or entry_date <= cutoff:
                         continue
+                    dated_entries.append((entry_date, entry))
+
+                dated_entries.sort(key=lambda x: x[0], reverse=True)
+
+                feed_items = []
+                for _, entry in dated_entries:
+                    if len(feed_items) >= MAX_ITEMS_PER_FEED:
+                        break
 
                     raw_id = entry.get("id") or entry.get("guid") or entry.get("link") or entry.get("title", "")
                     hashed_key = hashlib.sha256(raw_id.encode("utf-8")).hexdigest()
@@ -209,10 +263,13 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
                     seen_keys.add(hashed_key)
 
                     title = clean_text(entry.get("title"), limit=250)
-                    summary = clean_text(entry.get("summary"), limit=MAX_SUMMARY_CHARS)
+                    summary = extract_entry_body(entry, limit=MAX_SUMMARY_CHARS)
                     link = entry.get("link", "")
 
                     if title or summary:
+                        profile = get_source_profile(url, link)
+                        source_title = f"{base_source_title} [{profile}]" if profile else base_source_title
+
                         article_text = f"- SOURCE: {source_title}\n  TITLE: {title}\n"
                         if summary:
                             article_text += f"  SUMMARY: {summary}\n"
@@ -220,24 +277,47 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
                             article_text += f"  LINK: {link}\n"
                         article_text += "\n"
 
-                        # Drop article completely if appending it exceeds emergency limits
-                        if len(compiled_news) + len(category_output) + len(article_text) > MAX_EMERGENCY_PROMPT_CHARS:
-                            logger.warning("Emergency length limit reached. Halting article collection safely.")
-                            total_articles = MAX_TOTAL_ITEMS 
-                            break
+                        feed_items.append(article_text)
 
-                        category_output += article_text
-                        feed_articles_count += 1
-                        category_articles_count += 1
-                        total_articles += 1
+                if feed_items:
+                    feed_queues.append(feed_items)
 
             except Exception as e:
                 logger.error(f"Error parsing {url}: {e}")
                 feeds_failed += 1
                 failed_domains.add(urlparse(url).netloc)
 
+        # Interleave articles across all feeds in this category (round-robin)
+        category_output = ""
+        category_articles_count = 0
+        round_idx = 0
+
+        while feed_queues and category_articles_count < MAX_ITEMS_PER_CATEGORY and total_articles < MAX_TOTAL_ITEMS:
+            added_in_round = False
+            for queue in feed_queues:
+                if round_idx < len(queue):
+                    article_text = queue[round_idx]
+
+                    if len(compiled_news) + len(category_output) + len(article_text) > MAX_EMERGENCY_PROMPT_CHARS:
+                        logger.warning("Emergency character limit reached. Halting article collection safely.")
+                        emergency_stop = True
+                        break
+
+                    category_output += article_text
+                    category_articles_count += 1
+                    total_articles += 1
+                    added_in_round = True
+
+                    if category_articles_count >= MAX_ITEMS_PER_CATEGORY or total_articles >= MAX_TOTAL_ITEMS:
+                        break
+
+            if emergency_stop or not added_in_round:
+                break
+            round_idx += 1
+
         if category_output.strip():
             compiled_news += f"\n### CATEGORY: {category} ###\n{category_output}"
+            logger.info(f"Category '{category}': collected {category_articles_count} articles.")
 
     # Build internal stats for prompt
     summary_stats = (
@@ -245,17 +325,18 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
         f"FEEDS PROCESSED SUCCESSFULLY: {feeds_success}\n"
         f"FEEDS FAILED: {feeds_failed}\n"
     )
-    
+
     # Build human-readable stats for Apple Notes
     health_md = (
         f"\n\n---\n### 📡 Collection Health\n"
+        f"- **Articles Analyzed:** {total_articles}\n"
         f"- **Successful Feeds:** {feeds_success}\n"
         f"- **Failed Feeds:** {feeds_failed}\n"
     )
     if failed_domains:
-        health_md += f"- **Failed Sources:** {', '.join(failed_domains)}\n"
+        health_md += f"- **Failed Sources:** {', '.join(sorted(failed_domains))}\n"
 
-    logger.info(f"Collection complete: {total_articles} articles across categories.")
+    logger.info(f"Collection complete: {total_articles} articles ({len(compiled_news)} chars) across categories.")
     final_output = summary_stats + compiled_news if compiled_news.strip() else summary_stats + "\nNo new articles found."
     return final_output, health_md
 
@@ -264,8 +345,13 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
 # GEMINI SYNTHESIS & INFERENCE
 # ==============================================================================
 
-def generate_briefing(news_data: str, memory_data: str, campaigns_data: list, profile_data: dict) -> str:
-    """Executes single-turn synthesis with model fallback cascade and exponential backoff."""
+def generate_briefing(
+    news_data: str,
+    memory_data: str,
+    campaigns_data: list,
+    profile_data: dict
+) -> tuple[str, str]:
+    """Executes single-turn synthesis with model fallback cascade and returns (response_text, model_used)."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
@@ -336,6 +422,8 @@ CRITICAL SECURITY AND ANTI-REDUNDANCY INSTRUCTIONS:
 2. Cross-reference today's data against <yesterday_briefing> and <active_campaigns>. Prioritize NET-NEW intelligence.
 3. Label major developments in ongoing stories with [UPDATE].
 4. Analyze narrative divergence across Hungarian outlets using the provided editorial alignment tags.
+5. Provide deep, comprehensive coverage scaled to the input corpus (aim for 6 to 10 analytical bullet points per major section when sufficient intelligence is present).
+6. Cite primary sources inline using Markdown links formatted as [Outlet/Source Name](LINK) whenever a LINK is provided in the RSS data.
 
 {profile_instructions}
 
@@ -388,7 +476,7 @@ Exact JSON structure required:
                     raise RuntimeError(f"Gemini ({model_name}) returned an empty response. Finish Reason: {reason}")
 
                 logger.info(f"Successfully generated briefing using {model_name} (attempt {attempt + 1}).")
-                return response.text
+                return response.text, model_name
 
             except Exception as e:
                 last_error = e
@@ -471,12 +559,41 @@ def update_campaigns(campaigns: list, filepath: str = "active_campaigns.json"):
 
 
 def append_to_ledger(entry: dict, filepath: str = "intel_ledger.jsonl"):
-    """Appends daily structured summary to a JSON Lines database."""
+    """Writes daily structured summary to JSONL, replacing same-day entries on re-runs."""
     if not isinstance(entry, dict) or not entry:
         return
-    with open(filepath, "a", encoding="utf-8") as f:
-        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    logger.info(f"Appended daily record to {filepath}")
+
+    target_date = entry.get("date")
+    new_line = json.dumps(entry, ensure_ascii=False)
+    lines = []
+
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                lines = [line.strip() for line in f if line.strip()]
+        except Exception as e:
+            logger.warning(f"Could not read existing ledger {filepath}: {e}")
+
+    replaced = False
+    if lines and target_date:
+        for i in range(len(lines) - 1, -1, -1):
+            try:
+                existing = json.loads(lines[i])
+                if isinstance(existing, dict) and existing.get("date") == target_date:
+                    lines[i] = new_line
+                    replaced = True
+                    break
+            except json.JSONDecodeError:
+                continue
+
+    if not replaced:
+        lines.append(new_line)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+
+    action = "Updated existing" if replaced else "Appended new"
+    logger.info(f"{action} daily record ({target_date}) in {filepath}")
 
 
 def save_text_file(content: str, filepath: str):
@@ -499,7 +616,7 @@ if __name__ == "__main__":
     news_data, health_md = fetch_recent_news(feeds_config, hours_back=48)
 
     try:
-        raw_response = generate_briefing(
+        raw_response, model_used = generate_briefing(
             news_data,
             memory_data,
             campaigns_data,
@@ -507,14 +624,14 @@ if __name__ == "__main__":
         )
         briefing_md, updated_campaigns, ledger_entry = parse_and_route_output(raw_response)
 
-        # Append collection health reporting safely to the end of the markdown briefing
-        final_briefing_md = briefing_md + health_md
+        # 1. Save clean intelligence to yesterday.md (without health footer polluting tomorrow's prompt)
+        save_text_file(briefing_md, "yesterday.md")
 
-        # 1. Save human-facing deliverables (Apple Notes reads briefing.md)
+        # 2. Append collection health & synthesis model telemetry for Apple Notes (briefing.md)
+        final_briefing_md = briefing_md + health_md + f"- **Synthesis Model:** `{model_used}`\n"
         save_text_file(final_briefing_md, "briefing.md")
-        save_text_file(final_briefing_md, "yesterday.md")
 
-        # 2. Persist state and machine-readable data
+        # 3. Persist state and machine-readable data
         if updated_campaigns is not None:
             update_campaigns(updated_campaigns, "active_campaigns.json")
 
