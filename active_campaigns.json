@@ -4,7 +4,7 @@
     "first_seen": "2026-10-12",
     "last_seen": "2026-10-14",
     "status": "active",
-    "summary": "Coordinated Russian intelligence operations conducting arson, maritime drone strikes, critical satellite communications sabotage, and high-level political targeting across Poland, the Baltics, and the Black Sea littoral.",
+    "summary": "Coordinated Russian intelligence operations conducting arson, maritime drone strikes, satellite communications sabotage, and political targeting across Poland, the Baltics, and the Black Sea littoral.",
     "actors": [
       "Russian Intelligence (GRU/FSB Proxy Networks)"
     ],
@@ -20,9 +20,9 @@
     "first_seen": "2026-10-13",
     "last_seen": "2026-10-14",
     "status": "active",
-    "summary": "Threat actors weaponizing an unauthenticated three-vulnerability chain (including CVE-2026-104935) to secure remote root command execution on perimeter VPN appliances.",
+    "summary": "Threat actor UTA0576 weaponizing an unauthenticated three-vulnerability chain (CVE-2026-104935) to achieve remote root command execution and Active Directory exfiltration on perimeter VPN appliances.",
     "actors": [
-      "Unattributed APT"
+      "UTA0576 (Unattributed APT)"
     ],
     "sectors": [
       "Enterprise IT",
@@ -50,7 +50,7 @@
     "first_seen": "2026-10-13",
     "last_seen": "2026-10-14",
     "status": "active",
-    "summary": "Systematic targeting of retail cold-chain refrigeration networks via default and predictable credential schemes in building management controllers.",
+    "summary": "Systematic targeting of retail cold-chain refrigeration networks via default and predictable credential schemes (CVE-2025-41450) in Danfoss building management controllers.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -58,6 +58,20 @@
       "Retail Logistics",
       "Commercial Infrastructure",
       "Food Supply"
+    ]
+  },
+  {
+    "name": "Operation Midnight Mimosa",
+    "first_seen": "2026-10-14",
+    "last_seen": "2026-10-14",
+    "status": "active",
+    "summary": "Supply-chain tampering installing malicious preinstalled firmware onto low-cost MediaTek Android smartphones to enlist them as residential proxies and execute ad fraud.",
+    "actors": [
+      "Unattributed Cybercrime Actor"
+    ],
+    "sectors": [
+      "Consumer Electronics",
+      "Telecommunications"
     ]
   }
 ]
