@@ -4,7 +4,7 @@
     "first_seen": "2026-10-12",
     "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "State-directed Russian operations executing physical maritime drone attacks against commercial vessels in Romanian and Bulgarian waters, kinetic missile strikes on Kyiv heating grids, and rapid construction of Geran-5 launch bases in Rostov.",
+    "summary": "State-directed Russian operations executing physical maritime drone strikes in the Black Sea, mass kinetic missile assaults against Kyiv's energy grid, and base construction for Geran-5 drones in Rostov.",
     "actors": [
       "Russian Intelligence (GRU/FSB Proxy Networks)",
       "Russian Armed Forces"
@@ -21,7 +21,7 @@
     "first_seen": "2026-10-13",
     "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Threat actor UTA0576 and broader opportunists targeting perimeter VPNs via CVE-2026-104935 to bypass authentication and gain root persistence, triggering alerts from CISA and NBSZ NKI.",
+    "summary": "Threat actor UTA0576 and secondary opportunists weaponizing CVE-2026-104935 to bypass authentication and gain root persistence across perimeter gateways, triggering red alerts from CISA and NBSZ NKI.",
     "actors": [
       "UTA0576 (Unattributed APT)"
     ],
@@ -32,26 +32,11 @@
     ]
   },
   {
-    "name": "DPRK Remote Worker Infiltration (Operation Lonestar Roundup)",
-    "first_seen": "2026-10-13",
-    "last_seen": "2026-10-15",
-    "status": "active",
-    "summary": "Coordinated illicit IT worker laptop rings funneled through stolen US citizen identities to extract tech salaries for Pyongyang's defense complex.",
-    "actors": [
-      "DPRK State Actors (Famous Chollima)"
-    ],
-    "sectors": [
-      "Information Technology",
-      "Software Engineering",
-      "Defense Industrial Base"
-    ]
-  },
-  {
     "name": "Commercial BMS and Cold-Chain Disruption Campaign",
     "first_seen": "2026-10-13",
     "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Targeted manipulation of retail food networks expanding from Danfoss controllers to Copeland and Dixell platforms, triggering food spoilage and physical fires across ~700 French stores.",
+    "summary": "Targeted manipulation of retail cold-chain architecture spanning Danfoss, Emerson Copeland, and Dixell controllers, causing spoilage and physical fires across ~700 supermarkets in France.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -66,7 +51,7 @@
     "first_seen": "2026-10-15",
     "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Zero-click targeted ad campaigns facilitated by ad broker Discover-Tech dropping Candiru spyware onto media, government, and international agency devices upon iframe render.",
+    "summary": "Zero-click targeted advertising exploits operated via Discover-Tech delivering Candiru spyware onto high-profile targets across NATO, IAEA, and media institutions.",
     "actors": [
       "Candiru",
       "Discover-Tech",
@@ -84,7 +69,7 @@
     "first_seen": "2026-01-01",
     "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Chinese-speaking developer syndicate selling phishing tools (Iron Man, CoGUI, Haozi) via YAM Store, responsible for over 1 billion malicious credential-harvesting messages.",
+    "summary": "Chinese-speaking developer syndicate operating YAM Store, Iron Man System, and CoGUI, responsible for distributing over 1 billion credential-harvesting messages worldwide.",
     "actors": [
       "Storm-2990",
       "Storm-3119"
@@ -101,7 +86,7 @@
     "first_seen": "2026-09-01",
     "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Data-theft extortion wave targeting 38 global shipping terminals and logistics companies via an exposed shared application, leaking proprietary EDI operational streams.",
+    "summary": "Extortion campaign targeting 38 shipping terminal operators and logistics providers via an exposed shared enterprise portal, threatening public disclosure of operational EDI message feeds.",
     "actors": [
       "n0n Extortion Group"
     ],
@@ -109,6 +94,21 @@
       "Maritime Logistics",
       "Transportation",
       "Ports & Terminals"
+    ]
+  },
+  {
+    "name": "GhostAction CI/CD Credential Exfiltration Wave",
+    "first_seen": "2026-10-08",
+    "last_seen": "2026-10-16",
+    "status": "active",
+    "summary": "Large-scale compromise of 1,900 developer accounts targeting over 30,000 GitHub repositories to exfiltrate active cloud tokens, CI secrets, and deployment keys.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Software Engineering",
+      "Information Technology",
+      "Cloud Infrastructure"
     ]
   }
 ]
