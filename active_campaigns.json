@@ -2,25 +2,26 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-14",
+    "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Coordinated Russian intelligence operations conducting arson, maritime drone strikes, satellite communications sabotage, and political targeting across Poland, the Baltics, and the Black Sea littoral.",
+    "summary": "State-directed Russian operations executing physical maritime drone attacks against commercial vessels in Romanian and Bulgarian waters, kinetic missile strikes on Kyiv heating grids, and rapid construction of Geran-5 launch bases in Rostov.",
     "actors": [
-      "Russian Intelligence (GRU/FSB Proxy Networks)"
+      "Russian Intelligence (GRU/FSB Proxy Networks)",
+      "Russian Armed Forces"
     ],
     "sectors": [
       "Maritime Logistics",
-      "Telecommunications",
-      "Government Leadership",
-      "Commercial Infrastructure"
+      "Commercial Shipping",
+      "Energy Infrastructure",
+      "Telecommunications"
     ]
   },
   {
     "name": "Ivanti Connect Secure Zero-Day Exploitation Cluster",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-14",
+    "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Threat actor UTA0576 weaponizing an unauthenticated three-vulnerability chain (CVE-2026-104935) to achieve remote root command execution and Active Directory exfiltration on perimeter VPN appliances.",
+    "summary": "Threat actor UTA0576 and broader opportunists targeting perimeter VPNs via CVE-2026-104935 to bypass authentication and gain root persistence, triggering alerts from CISA and NBSZ NKI.",
     "actors": [
       "UTA0576 (Unattributed APT)"
     ],
@@ -33,11 +34,11 @@
   {
     "name": "DPRK Remote Worker Infiltration (Operation Lonestar Roundup)",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-14",
+    "last_seen": "2026-10-15",
     "status": "active",
-    "summary": "State-sponsored identity theft and laptop farm rings placing DPRK software developers inside Western tech enterprises to funnel revenue and exfiltrate IP.",
+    "summary": "Coordinated illicit IT worker laptop rings funneled through stolen US citizen identities to extract tech salaries for Pyongyang's defense complex.",
     "actors": [
-      "DPRK State Actors"
+      "DPRK State Actors (Famous Chollima)"
     ],
     "sectors": [
       "Information Technology",
@@ -48,9 +49,9 @@
   {
     "name": "Commercial BMS and Cold-Chain Disruption Campaign",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-14",
+    "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Systematic targeting of retail cold-chain refrigeration networks via default and predictable credential schemes (CVE-2025-41450) in Danfoss building management controllers.",
+    "summary": "Targeted manipulation of retail food networks expanding from Danfoss controllers to Copeland and Dixell platforms, triggering food spoilage and physical fires across ~700 French stores.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -61,17 +62,53 @@
     ]
   },
   {
-    "name": "Operation Midnight Mimosa",
-    "first_seen": "2026-10-14",
-    "last_seen": "2026-10-14",
+    "name": "AdFection Mercenary Spyware Campaign",
+    "first_seen": "2026-10-15",
+    "last_seen": "2026-10-16",
     "status": "active",
-    "summary": "Supply-chain tampering installing malicious preinstalled firmware onto low-cost MediaTek Android smartphones to enlist them as residential proxies and execute ad fraud.",
+    "summary": "Zero-click targeted ad campaigns facilitated by ad broker Discover-Tech dropping Candiru spyware onto media, government, and international agency devices upon iframe render.",
     "actors": [
-      "Unattributed Cybercrime Actor"
+      "Candiru",
+      "Discover-Tech",
+      "DARK CARTOGRAPHER"
     ],
     "sectors": [
-      "Consumer Electronics",
-      "Telecommunications"
+      "Media & Journalism",
+      "Defense",
+      "Government",
+      "International Diplomacy"
+    ]
+  },
+  {
+    "name": "Storm-2990 Global Phishing Kit Syndicate",
+    "first_seen": "2026-01-01",
+    "last_seen": "2026-10-16",
+    "status": "active",
+    "summary": "Chinese-speaking developer syndicate selling phishing tools (Iron Man, CoGUI, Haozi) via YAM Store, responsible for over 1 billion malicious credential-harvesting messages.",
+    "actors": [
+      "Storm-2990",
+      "Storm-3119"
+    ],
+    "sectors": [
+      "Financial Services",
+      "Healthcare",
+      "Logistics",
+      "Information Technology"
+    ]
+  },
+  {
+    "name": "n0n Maritime and Logistics Extortion Wave",
+    "first_seen": "2026-09-01",
+    "last_seen": "2026-10-16",
+    "status": "active",
+    "summary": "Data-theft extortion wave targeting 38 global shipping terminals and logistics companies via an exposed shared application, leaking proprietary EDI operational streams.",
+    "actors": [
+      "n0n Extortion Group"
+    ],
+    "sectors": [
+      "Maritime Logistics",
+      "Transportation",
+      "Ports & Terminals"
     ]
   }
 ]
