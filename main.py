@@ -8,13 +8,15 @@ import socket
 import sys
 import time
 from calendar import timegm
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 from urllib.request import Request, urlopen
 
 import feedparser
 from bs4 import BeautifulSoup
 from google import genai
+
 try:
     from curl_cffi import requests as curl_requests
     HAS_CURL_CFFI = True
@@ -36,7 +38,9 @@ MAX_TOTAL_ITEMS = 500
 MAX_SUMMARY_CHARS = 3500
 MAX_EMERGENCY_PROMPT_CHARS = 600000
 FEED_REQUEST_TIMEOUT = 12
+MAX_FETCH_WORKERS = 10
 CAMPAIGN_PRUNE_DAYS = 30
+TPM_LIMIT = 250000
 
 logging.basicConfig(
     level=logging.INFO,
@@ -127,11 +131,21 @@ def extract_entry_body(entry, limit: int = MAX_SUMMARY_CHARS) -> str:
     return best_text[:limit] + "..." if len(best_text) > limit else best_text
 
 
+def _is_valid_feed(parsed: feedparser.FeedParserDict, raw_bytes: bytes = b"") -> bool:
+    """Determines if a parsed response is a valid RSS/Atom feed (even if it has 0 recent entries)."""
+    if getattr(parsed, "entries", None):
+        return True
+    feed_meta = getattr(parsed, "feed", {})
+    if isinstance(feed_meta, dict) and (feed_meta.get("title") or feed_meta.get("link")):
+        if getattr(parsed, "version", ""):
+            return True
+    head = raw_bytes[:1000].lower()
+    return b"<rss" in head or b"<feed" in head or b"<rdf:rdf" in head
+
+
 def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
     """Downloads feed XML with redirects enabled and routes Azure-blocked 403 domains via edge proxies."""
-    from urllib.parse import quote
-
-    # 1. Direct fetch via curl_cffi WITH allow_redirects=True (fixes 301/302 fallthrough on telex, hvg, etc.)
+    # 1. Direct fetch via curl_cffi WITH allow_redirects=True
     if HAS_CURL_CFFI:
         for browser in ("chrome", "safari"):
             try:
@@ -148,7 +162,7 @@ def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
                 )
                 if resp.status_code == 200 and resp.content and b"<" in resp.content[:500]:
                     parsed = feedparser.parse(resp.content)
-                    if parsed.entries:
+                    if _is_valid_feed(parsed, resp.content):
                         return parsed
             except Exception as e:
                 logger.debug(f"curl_cffi ({browser}) failed for {url}: {e}")
@@ -167,13 +181,13 @@ def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
 
         if raw_content and b"<" in raw_content[:500]:
             parsed = feedparser.parse(raw_content)
-            if parsed.entries:
+            if _is_valid_feed(parsed, raw_content):
                 logger.info(f"Fetched via AllOrigins proxy fallback: {url}")
                 return parsed
     except Exception as e:
         logger.debug(f"AllOrigins fallback failed for {url}: {e}")
 
-    # 3. Edge Proxy 2: RSS2JSON API (specifically handles Cloudflare-protected Substack/CISA/BleepingComputer feeds)
+    # 3. Edge Proxy 2: RSS2JSON API (handles Cloudflare-protected Substack/CISA/BleepingComputer feeds)
     rss2json_url = f"https://api.rss2json.com/v1/api.json?rss_url={encoded_url}"
     try:
         if HAS_CURL_CFFI:
@@ -186,9 +200,10 @@ def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
 
         if json_text:
             data = json.loads(json_text)
-            if data.get("status") == "ok" and data.get("items"):
+            if data.get("status") == "ok" and isinstance(data.get("items"), list):
                 mock_feed = feedparser.FeedParserDict()
                 mock_feed.bozo = False
+                mock_feed.version = "rss20"
                 feed_meta = data.get("feed", {})
                 mock_feed.feed = feedparser.FeedParserDict({"title": feed_meta.get("title", "Unknown Source")})
                 mock_feed.entries = []
@@ -208,9 +223,8 @@ def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
                             pass
                     mock_feed.entries.append(entry)
 
-                if mock_feed.entries:
-                    logger.info(f"Fetched via RSS2JSON fallback: {url}")
-                    return mock_feed
+                logger.info(f"Fetched via RSS2JSON fallback: {url}")
+                return mock_feed
     except Exception as e:
         logger.debug(f"RSS2JSON fallback failed for {url}: {e}")
 
@@ -224,11 +238,14 @@ def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
     )
     with urlopen(req, timeout=timeout) as response:
         raw_bytes = response.read()
-    return feedparser.parse(raw_bytes)
+    parsed = feedparser.parse(raw_bytes)
+    if not _is_valid_feed(parsed, raw_bytes):
+        raise ValueError("Response is not a valid RSS/Atom XML document")
+    return parsed
 
 
 # ==============================================================================
-# CONFIGURATION & STATE PERSISTENCE LOADERS
+# CONFIGURATION & DATE-AWARE MEMORY LOADERS
 # ==============================================================================
 
 def load_feeds_config(filepath: str = "feeds.json") -> dict:
@@ -280,23 +297,96 @@ def load_json_file(filepath: str, default_value):
         return default_value
 
 
-def get_yesterdays_memory(filepath: str = "yesterday.md") -> str:
-    """Reads yesterday's briefing for short-term deduplication."""
+def _extract_memory_meta(raw_text: str) -> tuple[str | None, str]:
+    """Extracts optional <!-- BRIEFING_DATE: YYYY-MM-DD --> header and clean body."""
+    match = re.match(r"^<!--\s*BRIEFING_DATE:\s*(\d{4}-\d{2}-\d{2})\s*-->\s*", raw_text)
+    if match:
+        return match.group(1), raw_text[match.end():].strip()
+    return None, raw_text.strip()
+
+
+def get_yesterdays_memory(
+    yesterday_path: str = "yesterday.md",
+    briefing_path: str = "briefing.md"
+) -> str:
+    """
+    Returns the previous day's briefing for deduplication without overwriting baseline memory
+    during same-day manual test runs.
+    """
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # Check if briefing.md has an older day's report that hasn't been rolled into yesterday.md yet
+    if os.path.exists(briefing_path):
+        try:
+            with open(briefing_path, "r", encoding="utf-8") as f:
+                b_raw = f.read().strip()
+            b_date, b_body = _extract_memory_meta(b_raw)
+            # Strip Collection Health footer if present
+            b_clean = re.split(r"\n+---\n+### 📡 Collection Health", b_body)[0].strip()
+
+            if b_date and b_date != today_str and b_clean:
+                # Roll previous day's final briefing into yesterday.md automatically
+                stamped = f"<!-- BRIEFING_DATE: {b_date} -->\n{b_clean}\n"
+                with open(yesterday_path, "w", encoding="utf-8") as yf:
+                    yf.write(stamped)
+                logger.info(f"Rolled briefing from {b_date} into {yesterday_path}.")
+                return b_clean
+        except Exception as e:
+            logger.warning(f"Could not inspect {briefing_path} for memory rollover: {e}")
+
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read().strip()
-            return content if content and content != "null" else "No previous briefing found."
+        with open(yesterday_path, "r", encoding="utf-8") as f:
+            raw = f.read().strip()
+            if not raw or raw == "null":
+                return "No previous briefing found."
+            _, clean_body = _extract_memory_meta(raw)
+            return clean_body if clean_body else "No previous briefing found."
     except FileNotFoundError:
         return "No previous briefing found."
 
 
+def persist_briefings(clean_briefing_md: str, health_footer_md: str):
+    """
+    Saves today's briefing.md (with health footer for Apple Notes) while preserving yesterday.md
+    if yesterday.md already holds a prior day's memory during same-day re-runs.
+    """
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # 1. Always write today's full deliverable to briefing.md (date comment is invisible in Markdown/Apple Notes)
+    full_briefing = f"<!-- BRIEFING_DATE: {today_str} -->\n{clean_briefing_md}\n{health_footer_md}"
+    save_text_file(full_briefing, "briefing.md")
+
+    # 2. If yesterday.md is missing or has no date stamp yet, initialize it so it isn't empty
+    if not os.path.exists("yesterday.md"):
+        save_text_file(f"<!-- BRIEFING_DATE: {today_str} -->\n{clean_briefing_md}\n", "yesterday.md")
+    else:
+        try:
+            with open("yesterday.md", "r", encoding="utf-8") as f:
+                y_raw = f.read().strip()
+            y_date, _ = _extract_memory_meta(y_raw)
+            # Only overwrite yesterday.md if it doesn't have a valid prior-day stamp
+            if not y_date:
+                save_text_file(f"<!-- BRIEFING_DATE: {today_str} -->\n{clean_briefing_md}\n", "yesterday.md")
+        except Exception:
+            pass
+
+
 # ==============================================================================
-# RSS HARVESTING & ROUND-ROBIN DEDUPLICATION
+# CONCURRENT RSS HARVESTING & ROUND-ROBIN DEDUPLICATION
 # ==============================================================================
 
+def _fetch_single_url(url: str) -> tuple[str, feedparser.FeedParserDict | None, Exception | None]:
+    """Worker helper for concurrent feed downloading."""
+    try:
+        parsed = fetch_and_parse_feed(url, timeout=FEED_REQUEST_TIMEOUT)
+        return url, parsed, None
+    except Exception as e:
+        return url, None, e
+
+
 def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]:
-    """Aggregates RSS entries using round-robin category balancing and returns (news_corpus, health_stats_markdown)."""
-    logger.info(f"Fetching RSS feeds from the last {hours_back} hours...")
+    """Concurrently aggregates RSS entries with round-robin category balancing."""
+    logger.info(f"Fetching RSS feeds from the last {hours_back} hours (workers={MAX_FETCH_WORKERS})...")
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours_back)
 
     compiled_news = ""
@@ -312,71 +402,70 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
             logger.warning("Global article or prompt limit reached. Halting collection.")
             break
 
-        # Collect valid recent entries per feed first for round-robin interleaving
         feed_queues: list[list[str]] = []
 
-        for url in urls:
-            try:
-                parsed = fetch_and_parse_feed(url, timeout=FEED_REQUEST_TIMEOUT)
+        # Fetch all feeds in the category concurrently while preserving list order
+        with ThreadPoolExecutor(max_workers=MAX_FETCH_WORKERS) as executor:
+            results = list(executor.map(_fetch_single_url, urls))
 
-                if getattr(parsed, "bozo", False) and not parsed.entries:
-                    feeds_failed += 1
-                    failed_domains.add(urlparse(url).netloc)
-                    continue
-
-                if not parsed.entries:
-                    feeds_failed += 1
-                    failed_domains.add(urlparse(url).netloc)
-                    continue
-
-                feeds_success += 1
-                base_source_title = clean_text(getattr(parsed.feed, "title", "Unknown Source"), limit=100)
-
-                # Extract and sort valid recent entries for this feed (newest first)
-                dated_entries = []
-                for entry in parsed.entries:
-                    entry_date = get_entry_datetime(entry)
-                    if not entry_date or entry_date <= cutoff:
-                        continue
-                    dated_entries.append((entry_date, entry))
-
-                dated_entries.sort(key=lambda x: x[0], reverse=True)
-
-                feed_items = []
-                for _, entry in dated_entries:
-                    if len(feed_items) >= MAX_ITEMS_PER_FEED:
-                        break
-
-                    raw_id = entry.get("id") or entry.get("guid") or entry.get("link") or entry.get("title", "")
-                    hashed_key = hashlib.sha256(raw_id.encode("utf-8")).hexdigest()
-                    if hashed_key in seen_keys:
-                        continue
-                    seen_keys.add(hashed_key)
-
-                    title = clean_text(entry.get("title"), limit=250)
-                    summary = extract_entry_body(entry, limit=MAX_SUMMARY_CHARS)
-                    link = entry.get("link", "")
-
-                    if title or summary:
-                        profile = get_source_profile(url, link)
-                        source_title = f"{base_source_title} [{profile}]" if profile else base_source_title
-
-                        article_text = f"- SOURCE: {source_title}\n  TITLE: {title}\n"
-                        if summary:
-                            article_text += f"  SUMMARY: {summary}\n"
-                        if link:
-                            article_text += f"  LINK: {link}\n"
-                        article_text += "\n"
-
-                        feed_items.append(article_text)
-
-                if feed_items:
-                    feed_queues.append(feed_items)
-
-            except Exception as e:
-                logger.error(f"Error parsing {url}: {e}")
+        for url, parsed, err in results:
+            if err is not None or parsed is None:
+                logger.error(f"Error parsing {url}: {err}")
                 feeds_failed += 1
                 failed_domains.add(urlparse(url).netloc)
+                continue
+
+            if getattr(parsed, "bozo", False) and not _is_valid_feed(parsed):
+                feeds_failed += 1
+                failed_domains.add(urlparse(url).netloc)
+                continue
+
+            # Valid feed (even if 0 new articles in the last 48h)
+            feeds_success += 1
+            if not parsed.entries:
+                continue
+
+            base_source_title = clean_text(getattr(parsed.feed, "title", "Unknown Source"), limit=100)
+
+            dated_entries = []
+            for entry in parsed.entries:
+                entry_date = get_entry_datetime(entry)
+                if not entry_date or entry_date <= cutoff:
+                    continue
+                dated_entries.append((entry_date, entry))
+
+            dated_entries.sort(key=lambda x: x[0], reverse=True)
+
+            feed_items = []
+            for _, entry in dated_entries:
+                if len(feed_items) >= MAX_ITEMS_PER_FEED:
+                    break
+
+                raw_id = entry.get("id") or entry.get("guid") or entry.get("link") or entry.get("title", "")
+                hashed_key = hashlib.sha256(raw_id.encode("utf-8")).hexdigest()
+                if hashed_key in seen_keys:
+                    continue
+                seen_keys.add(hashed_key)
+
+                title = clean_text(entry.get("title"), limit=250)
+                summary = extract_entry_body(entry, limit=MAX_SUMMARY_CHARS)
+                link = entry.get("link", "")
+
+                if title or summary:
+                    profile = get_source_profile(url, link)
+                    source_title = f"{base_source_title} [{profile}]" if profile else base_source_title
+
+                    article_text = f"- SOURCE: {source_title}\n  TITLE: {title}\n"
+                    if summary:
+                        article_text += f"  SUMMARY: {summary}\n"
+                    if link:
+                        article_text += f"  LINK: {link}\n"
+                    article_text += "\n"
+
+                    feed_items.append(article_text)
+
+            if feed_items:
+                feed_queues.append(feed_items)
 
         # Interleave articles across all feeds in this category (round-robin)
         category_output = ""
@@ -410,14 +499,12 @@ def fetch_recent_news(feeds_dict: dict, hours_back: int = 48) -> tuple[str, str]
             compiled_news += f"\n### CATEGORY: {category} ###\n{category_output}"
             logger.info(f"Category '{category}': collected {category_articles_count} articles.")
 
-    # Build internal stats for prompt
     summary_stats = (
         f"TOTAL RECENT ARTICLES COLLECTED: {total_articles}\n"
         f"FEEDS PROCESSED SUCCESSFULLY: {feeds_success}\n"
         f"FEEDS FAILED: {feeds_failed}\n"
     )
 
-    # Build human-readable stats for Apple Notes
     health_md = (
         f"\n\n---\n### 📡 Collection Health\n"
         f"- **Articles Analyzed:** {total_articles}\n"
@@ -441,8 +528,8 @@ def generate_briefing(
     memory_data: str,
     campaigns_data: list,
     profile_data: dict
-) -> tuple[str, str]:
-    """Executes single-turn synthesis with model fallback cascade and returns (response_text, model_used)."""
+) -> tuple[str, str, str]:
+    """Executes single-turn synthesis with model fallback cascade and returns (response_text, model_used, token_stats_str)."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
@@ -450,7 +537,6 @@ def generate_briefing(
 
     client = genai.Client(api_key=api_key)
 
-    # Define the fallback cascade order
     default_cascade = [
         "gemini-3.8-flash",
         "gemini-3.7-flash",
@@ -458,14 +544,12 @@ def generate_briefing(
         "gemini-3-flash",
     ]
 
-    # Allow GEMINI_MODEL env var to override the primary model while keeping fallbacks
     env_model = os.environ.get("GEMINI_MODEL")
     if env_model:
         model_cascade = [env_model] + [m for m in default_cascade if m != env_model]
     else:
         model_cascade = default_cascade
 
-    # Optional dynamic profile targeting block
     profile_instructions = ""
     if profile_data.get("enabled"):
         profile_instructions = f"""
@@ -480,7 +564,6 @@ If an article relates to any monitored assets, prominently flag it and assign an
 [EXPOSURE: LOW | MEDIUM | HIGH | CRITICAL]
 """
 
-    # Schema template to anchor JSON generation reliably
     json_template = {
         "active_campaigns": [
             {
@@ -515,6 +598,7 @@ CRITICAL SECURITY AND ANTI-REDUNDANCY INSTRUCTIONS:
 4. Analyze narrative divergence across Hungarian outlets using the provided editorial alignment tags.
 5. Provide deep, comprehensive coverage scaled to the input corpus (aim for 6 to 10 analytical bullet points per major section when sufficient intelligence is present).
 6. Cite primary sources inline using Markdown links formatted as [Outlet/Source Name](LINK) whenever a LINK is provided in the RSS data.
+7. When updating <active_campaigns>, preserve exact "name" identifiers for existing campaigns rather than renaming them, and keep the list focused on the top 15 most significant active campaigns.
 
 {profile_instructions}
 
@@ -566,8 +650,21 @@ Exact JSON structure required:
                         reason = getattr(response.candidates[0], "finish_reason", "Unknown")
                     raise RuntimeError(f"Gemini ({model_name}) returned an empty response. Finish Reason: {reason}")
 
-                logger.info(f"Successfully generated briefing using {model_name} (attempt {attempt + 1}).")
-                return response.text, model_name
+                # Extract token telemetry from usage_metadata
+                token_stats_str = "Unavailable"
+                usage = getattr(response, "usage_metadata", None)
+                if usage:
+                    in_tok = getattr(usage, "prompt_token_count", 0) or 0
+                    out_tok = getattr(usage, "candidates_token_count", 0) or 0
+                    tot_tok = getattr(usage, "total_token_count", 0) or (in_tok + out_tok)
+                    pct = (tot_tok / TPM_LIMIT) * 100
+                    token_stats_str = f"{in_tok:,} in / {out_tok:,} out ({tot_tok:,} total — {pct:.1f}% of 250k TPM)"
+
+                logger.info(
+                    f"Successfully generated briefing using {model_name} "
+                    f"(attempt {attempt + 1}) | Tokens: {token_stats_str}"
+                )
+                return response.text, model_name, token_stats_str
 
             except Exception as e:
                 last_error = e
@@ -606,14 +703,17 @@ Exact JSON structure required:
 # ==============================================================================
 
 def parse_and_route_output(raw_output: str):
-    """Splits Markdown text from the structured JSON code block."""
-    json_match = re.search(r"```json\s*(.*?)\s*```", raw_output, re.DOTALL)
+    """Splits Markdown text from the structured JSON code block and cleans trailing dividers."""
+    json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_output, re.DOTALL)
 
     if not json_match:
         logger.warning("No JSON payload block detected. Saving raw response as Markdown.")
-        return raw_output.strip(), None, None
+        cleaned_md = re.sub(r"(\n\s*---+\s*)+\Z", "", raw_output.strip())
+        return cleaned_md, None, None
 
     markdown_content = raw_output[:json_match.start()].strip()
+    # Strip trailing horizontal rules so health_md doesn't create a double '---' divider
+    markdown_content = re.sub(r"(\n\s*---+\s*)+\Z", "", markdown_content).strip()
 
     try:
         payload = json.loads(json_match.group(1))
@@ -626,23 +726,34 @@ def parse_and_route_output(raw_output: str):
 
 
 def update_campaigns(campaigns: list, filepath: str = "active_campaigns.json"):
-    """Prunes campaigns older than CAMPAIGN_PRUNE_DAYS and persists updated state."""
+    """Prunes campaigns older than CAMPAIGN_PRUNE_DAYS, deduplicates by name, and persists state."""
     if not isinstance(campaigns, list):
         return
 
     cutoff_date = (datetime.now(timezone.utc) - timedelta(days=CAMPAIGN_PRUNE_DAYS)).date()
 
     active_pool = []
+    seen_names = set()
     for campaign in campaigns:
+        if not isinstance(campaign, dict):
+            continue
+        name_key = str(campaign.get("name", "")).strip().lower()
+        if name_key and name_key in seen_names:
+            continue
+
         try:
             last_seen_date = date.fromisoformat(campaign.get("last_seen", "1970-01-01"))
             if last_seen_date >= cutoff_date:
                 active_pool.append(campaign)
+                if name_key:
+                    seen_names.add(name_key)
             else:
                 logger.info(f"Pruned stale campaign: {campaign.get('name')}")
         except ValueError:
             logger.warning(f"Invalid date format in campaign '{campaign.get('name')}'. Retaining for safety.")
             active_pool.append(campaign)
+            if name_key:
+                seen_names.add(name_key)
 
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(active_pool, f, indent=2, ensure_ascii=False)
@@ -702,12 +813,12 @@ if __name__ == "__main__":
     feeds_config = load_feeds_config("feeds.json")
     profile_data = load_profile("profile.json")
     campaigns_data = load_json_file("active_campaigns.json", default_value=[])
-    memory_data = get_yesterdays_memory("yesterday.md")
+    memory_data = get_yesterdays_memory("yesterday.md", "briefing.md")
 
     news_data, health_md = fetch_recent_news(feeds_config, hours_back=48)
 
     try:
-        raw_response, model_used = generate_briefing(
+        raw_response, model_used, token_stats = generate_briefing(
             news_data,
             memory_data,
             campaigns_data,
@@ -715,14 +826,17 @@ if __name__ == "__main__":
         )
         briefing_md, updated_campaigns, ledger_entry = parse_and_route_output(raw_response)
 
-        # 1. Save clean intelligence to yesterday.md (without health footer polluting tomorrow's prompt)
-        save_text_file(briefing_md, "yesterday.md")
+        # Build complete telemetry footer for briefing.md
+        full_health_footer = (
+            f"{health_md}"
+            f"- **Synthesis Model:** `{model_used}`\n"
+            f"- **Token Usage:** {token_stats}\n"
+        )
 
-        # 2. Append collection health & synthesis model telemetry for Apple Notes (briefing.md)
-        final_briefing_md = briefing_md + health_md + f"- **Synthesis Model:** `{model_used}`\n"
-        save_text_file(final_briefing_md, "briefing.md")
+        # 1. Persist human-facing briefing and manage date-stamped yesterday.md rollover
+        persist_briefings(briefing_md, full_health_footer)
 
-        # 3. Persist state and machine-readable data
+        # 2. Persist state and machine-readable data
         if updated_campaigns is not None:
             update_campaigns(updated_campaigns, "active_campaigns.json")
 
