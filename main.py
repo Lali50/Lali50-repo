@@ -128,48 +128,100 @@ def extract_entry_body(entry, limit: int = MAX_SUMMARY_CHARS) -> str:
 
 
 def fetch_and_parse_feed(url: str, timeout: int = FEED_REQUEST_TIMEOUT):
-    """Downloads feed XML using Chrome TLS impersonation (curl_cffi) with RSS-agent fallback."""
-    # Attempt 1: Real Chrome TLS/JA3 + HTTP/2 fingerprint via curl_cffi (bypasses Cloudflare/Akamai 403s)
+    """Downloads feed XML with redirects enabled and routes Azure-blocked 403 domains via edge proxies."""
+    from urllib.parse import quote
+
+    # 1. Direct fetch via curl_cffi WITH allow_redirects=True (fixes 301/302 fallthrough on telex, hvg, etc.)
     if HAS_CURL_CFFI:
-        try:
-            resp = curl_requests.get(
-                url,
-                impersonate="chrome",
-                timeout=timeout,
-                headers={
-                    "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
-                    "Accept-Language": "en-US,en;q=0.9,hu;q=0.8",
-                },
-            )
-            if resp.status_code == 200 and resp.content:
-                parsed = feedparser.parse(resp.content)
-                if parsed.entries:
-                    return parsed
-        except Exception as e:
-            logger.debug(f"curl_cffi attempt failed for {url}: {e}")
+        for browser in ("chrome", "safari"):
+            try:
+                resp = curl_requests.get(
+                    url,
+                    impersonate=browser,
+                    allow_redirects=True,
+                    timeout=timeout,
+                    headers={
+                        "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, text/html, */*;q=0.8",
+                        "Accept-Language": "hu-HU,hu;q=0.9,en-US;q=0.8,en;q=0.7",
+                        "Cache-Control": "no-cache",
+                    },
+                )
+                if resp.status_code == 200 and resp.content and b"<" in resp.content[:500]:
+                    parsed = feedparser.parse(resp.content)
+                    if parsed.entries:
+                        return parsed
+            except Exception as e:
+                logger.debug(f"curl_cffi ({browser}) failed for {url}: {e}")
 
-    # Attempt 2: Honest RSS Reader User-Agent (avoids Cloudflare TLS-vs-UA mismatch penalties)
-    rss_headers = {
-        "User-Agent": "Feedbin feed-id:12345 - 1 subscribers",
-        "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
-    }
+    # 2. Edge Proxy 1: AllOrigins Raw Relay (bypasses GitHub Actions Azure IP 403 blocks)
+    encoded_url = quote(url, safe="")
+    allorigins_url = f"https://api.allorigins.win/raw?url={encoded_url}"
     try:
-        req = Request(url, headers=rss_headers)
-        with urlopen(req, timeout=timeout) as response:
-            raw_bytes = response.read()
-        parsed = feedparser.parse(raw_bytes)
-        if parsed.entries:
-            return parsed
-    except Exception:
-        pass
+        if HAS_CURL_CFFI:
+            resp = curl_requests.get(allorigins_url, impersonate="chrome", allow_redirects=True, timeout=timeout)
+            raw_content = resp.content if resp.status_code == 200 else None
+        else:
+            req = Request(allorigins_url, headers={"User-Agent": USER_AGENT})
+            with urlopen(req, timeout=timeout) as response:
+                raw_content = response.read()
 
-    # Attempt 3: Standard browser User-Agent fallback
-    browser_headers = {
-        "User-Agent": USER_AGENT,
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "hu-HU,hu;q=0.9,en-US;q=0.8,en;q=0.7",
-    }
-    req = Request(url, headers=browser_headers)
+        if raw_content and b"<" in raw_content[:500]:
+            parsed = feedparser.parse(raw_content)
+            if parsed.entries:
+                logger.info(f"Fetched via AllOrigins proxy fallback: {url}")
+                return parsed
+    except Exception as e:
+        logger.debug(f"AllOrigins fallback failed for {url}: {e}")
+
+    # 3. Edge Proxy 2: RSS2JSON API (specifically handles Cloudflare-protected Substack/CISA/BleepingComputer feeds)
+    rss2json_url = f"https://api.rss2json.com/v1/api.json?rss_url={encoded_url}"
+    try:
+        if HAS_CURL_CFFI:
+            resp = curl_requests.get(rss2json_url, impersonate="chrome", allow_redirects=True, timeout=timeout)
+            json_text = resp.text if resp.status_code == 200 else None
+        else:
+            req = Request(rss2json_url, headers={"User-Agent": USER_AGENT})
+            with urlopen(req, timeout=timeout) as response:
+                json_text = response.read().decode("utf-8", errors="replace")
+
+        if json_text:
+            data = json.loads(json_text)
+            if data.get("status") == "ok" and data.get("items"):
+                mock_feed = feedparser.FeedParserDict()
+                mock_feed.bozo = False
+                feed_meta = data.get("feed", {})
+                mock_feed.feed = feedparser.FeedParserDict({"title": feed_meta.get("title", "Unknown Source")})
+                mock_feed.entries = []
+
+                for item in data["items"]:
+                    entry = feedparser.FeedParserDict()
+                    entry["id"] = item.get("guid") or item.get("link") or item.get("title", "")
+                    entry["title"] = item.get("title", "")
+                    entry["link"] = item.get("link", "")
+                    entry["summary"] = item.get("content") or item.get("description") or ""
+                    pub_date = item.get("pubDate")
+                    if pub_date:
+                        try:
+                            dt = datetime.fromisoformat(pub_date.replace(" ", "T") + "+00:00")
+                            entry["published_parsed"] = dt.utctimetuple()
+                        except Exception:
+                            pass
+                    mock_feed.entries.append(entry)
+
+                if mock_feed.entries:
+                    logger.info(f"Fetched via RSS2JSON fallback: {url}")
+                    return mock_feed
+    except Exception as e:
+        logger.debug(f"RSS2JSON fallback failed for {url}: {e}")
+
+    # 4. Final direct fallback (will raise clean error if unreachable everywhere)
+    req = Request(
+        url,
+        headers={
+            "User-Agent": "Feedbin feed-id:12345 - 1 subscribers",
+            "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
+        },
+    )
     with urlopen(req, timeout=timeout) as response:
         raw_bytes = response.read()
     return feedparser.parse(raw_bytes)
