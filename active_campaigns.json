@@ -2,26 +2,57 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-17",
+    "last_seen": "2026-10-18",
     "status": "active",
-    "summary": "Russian operations continue with drone attacks prompting maritime sinkings in Bulgaria's EEZ, while retaliatory Ukrainian strikes reach Surgut (2,400km deep) and force nightly Moscow airspace shutdowns.",
+    "summary": "Russian kinetic operations continue with drone incursions prompting Romanian F-16 air-policing shootdowns over the Black Sea, a strike disabling a German automotive wiring plant in Lutsk, and reciprocal Ukrainian drone swarms hitting the St. Petersburg Oil Terminal and VKontakte data centers.",
     "actors": [
-      "Russian Intelligence (GRU/FSB Proxy Networks)",
-      "Russian Armed Forces"
+      "Russian Armed Forces",
+      "Russian Intelligence (GRU/FSB Proxy Networks)"
     ],
     "sectors": [
-      "Maritime Logistics",
-      "Commercial Shipping",
       "Energy Infrastructure",
+      "Maritime Logistics",
+      "Automotive Manufacturing",
       "Telecommunications"
+    ]
+  },
+  {
+    "name": "Armory Castle Zero-Day Exploitation Cluster",
+    "first_seen": "2026-10-16",
+    "last_seen": "2026-10-18",
+    "status": "active",
+    "summary": "Chinese state-sponsored espionage group Armory Castle (formerly UNC5221) actively weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network compromise, prompting emergency CISA KEV catalog directives.",
+    "actors": [
+      "Armory Castle"
+    ],
+    "sectors": [
+      "Enterprise IT",
+      "Government",
+      "Defense",
+      "Software as a Service (SaaS)"
+    ]
+  },
+  {
+    "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
+    "first_seen": "2026-10-18",
+    "last_seen": "2026-10-18",
+    "status": "active",
+    "summary": "Compromise of ConnectWise Cloud Backup (formerly SkyKick) administrative identities allowing unauthorized threat actors to access and manipulate 173 downstream Microsoft 365 customer tenant environments.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Managed Service Providers",
+      "Cloud Infrastructure",
+      "Enterprise IT"
     ]
   },
   {
     "name": "Commercial BMS and Cold-Chain Disruption Campaign",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-17",
+    "last_seen": "2026-10-18",
     "status": "active",
-    "summary": "Coordinated manipulation of exposed Danfoss, Copeland, and Dixell BMS controllers across French supermarkets, driving heating defrost cycles to 50-80°C and ruining millions of euros of retail food inventory.",
+    "summary": "Coordinated sabotage of Danfoss, Copeland, and Dixell BMS controllers across French supermarkets, driving ANSSI and industrial incident response teams to mandate factory resets and complete WAN network disconnections.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -32,24 +63,39 @@
     ]
   },
   {
-    "name": "n0n Maritime and Logistics Extortion Wave",
-    "first_seen": "2026-09-01",
-    "last_seen": "2026-10-17",
+    "name": "AOMEI Backupper Update Server Tampering Campaign",
+    "first_seen": "2026-05-01",
+    "last_seen": "2026-10-18",
     "status": "active",
-    "summary": "Financially motivated extortion collective posting exfiltrated operational EDI feeds, manifests, and system configurations from 38 port and shipping entities across 18 countries via a compromised shared logistics application.",
+    "summary": "Threat actors repeatedly compromised AOMEI's official update servers in 5-to-10-minute bursts to deliver trojanized application updates that deployed secondary backdoors onto target Windows endpoints.",
     "actors": [
-      "n0n Extortion Group"
+      "Unattributed Threat Actor"
     ],
     "sectors": [
-      "Maritime Logistics",
-      "Transportation",
-      "Ports & Terminals"
+      "Software Engineering",
+      "Enterprise IT",
+      "Consumer Technology"
+    ]
+  },
+  {
+    "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
+    "first_seen": "2026-10-16",
+    "last_seen": "2026-10-18",
+    "status": "active",
+    "summary": "Exploitation of path traversal flaw CVE-2025-61624 across Fortinet perimeter gateways to execute commands and inject in-memory ARM64 malware PEERSTITCH, bypassing VPN access controls.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Telecommunications",
+      "Enterprise IT",
+      "Critical Infrastructure"
     ]
   },
   {
     "name": "AdFection Mercenary Spyware Campaign",
     "first_seen": "2026-10-15",
-    "last_seen": "2026-10-17",
+    "last_seen": "2026-10-18",
     "status": "active",
     "summary": "Commercial spyware delivery network leveraging Discover-Tech's Controlium RTB platform to deliver zero-click Candiru spyware onto high-profile targets across Al Jazeera and international diplomacy.",
     "actors": [
@@ -65,24 +111,24 @@
     ]
   },
   {
-    "name": "Armory Castle Zero-Day Exploitation Cluster",
-    "first_seen": "2026-10-16",
-    "last_seen": "2026-10-17",
+    "name": "n0n Maritime and Logistics Extortion Wave",
+    "first_seen": "2026-09-01",
+    "last_seen": "2026-10-18",
     "status": "active",
-    "summary": "Chinese state-sponsored APT exploiting BeyondTrust zero-day vulnerability CVE-2026-102764 for initial perimeter compromise, log purging, and persistence across enterprise networks.",
+    "summary": "Financially motivated extortion collective posting exfiltrated operational EDI feeds, manifests, and system configurations from 38 port and shipping entities across 18 countries via a compromised shared logistics application.",
     "actors": [
-      "Armory Castle"
+      "n0n Extortion Group"
     ],
     "sectors": [
-      "Enterprise IT",
-      "Government",
-      "Defense"
+      "Maritime Logistics",
+      "Transportation",
+      "Ports & Terminals"
     ]
   },
   {
     "name": "YAM Store Phishing and Impersonation Ecosystem",
     "first_seen": "2026-01-01",
-    "last_seen": "2026-10-17",
+    "last_seen": "2026-10-18",
     "status": "active",
     "summary": "Massive Chinese-language cybercrime syndicates (YAM Store, CoGUI, Iron Man) generating over 1 billion phishing messages across 150 countries, recently targeted by joint Microsoft and Health-ISAC domain seizures.",
     "actors": [
