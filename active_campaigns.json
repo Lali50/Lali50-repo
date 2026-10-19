@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-18",
+    "last_seen": "2026-10-19",
     "status": "active",
-    "summary": "Russian kinetic operations continue with drone incursions prompting Romanian F-16 air-policing shootdowns over the Black Sea, a strike disabling a German automotive wiring plant in Lutsk, and reciprocal Ukrainian drone swarms hitting the St. Petersburg Oil Terminal and VKontakte data centers.",
+    "summary": "Russian operations continue with an off-course EW-diverted drone exploding in Lithuania, a thwarted arson attack against a Starlink warehouse in Lithuania, recurrent ballistic strikes severing Kyiv metro power rails, and reciprocal Ukrainian drone attacks hitting a VKontakte data center and the St. Petersburg Oil Terminal.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)"
@@ -13,7 +13,8 @@
       "Energy Infrastructure",
       "Maritime Logistics",
       "Automotive Manufacturing",
-      "Telecommunications"
+      "Telecommunications",
+      "Public Transportation"
     ]
   },
   {
@@ -21,7 +22,7 @@
     "first_seen": "2026-10-16",
     "last_seen": "2026-10-18",
     "status": "active",
-    "summary": "Chinese state-sponsored espionage group Armory Castle (formerly UNC5221) actively weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network compromise, prompting emergency CISA KEV catalog directives.",
+    "summary": "Chinese state-sponsored espionage group Armory Castle (formerly UNC5221) weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network access, under emergency CISA KEV directives.",
     "actors": [
       "Armory Castle"
     ],
@@ -35,9 +36,9 @@
   {
     "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
     "first_seen": "2026-10-18",
-    "last_seen": "2026-10-18",
+    "last_seen": "2026-10-19",
     "status": "active",
-    "summary": "Compromise of ConnectWise Cloud Backup (formerly SkyKick) administrative identities allowing unauthorized threat actors to access and manipulate 173 downstream Microsoft 365 customer tenant environments.",
+    "summary": "Threat actors abused compromised application identities (including GUID 506e08f9-6e9a-4da4-942b-a099a03644ae) within ConnectWise Cloud Backup to bypass authentication and infiltrate 173 downstream Microsoft 365 customer tenants.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -50,9 +51,9 @@
   {
     "name": "Commercial BMS and Cold-Chain Disruption Campaign",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-18",
+    "last_seen": "2026-10-19",
     "status": "active",
-    "summary": "Coordinated sabotage of Danfoss, Copeland, and Dixell BMS controllers across French supermarkets, driving ANSSI and industrial incident response teams to mandate factory resets and complete WAN network disconnections.",
+    "summary": "Cyber-physical sabotage against internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across French supermarkets, prompting inter-ministerial containment and nationwide OT isolation directives.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -95,9 +96,9 @@
   {
     "name": "AdFection Mercenary Spyware Campaign",
     "first_seen": "2026-10-15",
-    "last_seen": "2026-10-18",
+    "last_seen": "2026-10-19",
     "status": "active",
-    "summary": "Commercial spyware delivery network leveraging Discover-Tech's Controlium RTB platform to deliver zero-click Candiru spyware onto high-profile targets across Al Jazeera and international diplomacy.",
+    "summary": "Commercial spyware delivery network leveraging Discover-Tech's Controlium RTB platform to deliver zero-click Candiru spyware onto high-profile targets across media, journalism, and international diplomacy.",
     "actors": [
       "Candiru",
       "Discover-Tech",
@@ -170,6 +171,20 @@
       "Software Engineering",
       "Information Technology",
       "Cloud Infrastructure"
+    ]
+  },
+  {
+    "name": "MALFEX Supply Chain Infiltration Campaign",
+    "first_seen": "2026-09-30",
+    "last_seen": "2026-10-19",
+    "status": "active",
+    "summary": "Adversaries deploying malicious open-source packages (such as 'imgdecode') to the public npm registry containing native compiled Windows C++ addons to inject in-memory shellcode loaders into developer endpoints.",
+    "actors": [
+      "malfexteste8 (MALFEX Operators)"
+    ],
+    "sectors": [
+      "Software Development",
+      "Information Technology"
     ]
   }
 ]
