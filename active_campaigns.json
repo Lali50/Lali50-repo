@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-19",
+    "last_seen": "2026-10-20",
     "status": "active",
-    "summary": "Russian operations continue with an off-course EW-diverted drone exploding in Lithuania, a thwarted arson attack against a Starlink warehouse in Lithuania, recurrent ballistic strikes severing Kyiv metro power rails, and reciprocal Ukrainian drone attacks hitting a VKontakte data center and the St. Petersburg Oil Terminal.",
+    "summary": "Russian operations continue with extensive ballistic/drone strikes disabling 28 Ukrainian power stations, maritime drone strikes sinking merchant vessels in the Black Sea, and military satellite KOSMOS 2612 maneuvering aggressively against Finnish radar satellite ICEYE-X36.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)"
@@ -12,7 +12,7 @@
     "sectors": [
       "Energy Infrastructure",
       "Maritime Logistics",
-      "Automotive Manufacturing",
+      "Aerospace & Defense",
       "Telecommunications",
       "Public Transportation"
     ]
@@ -36,9 +36,9 @@
   {
     "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
     "first_seen": "2026-10-18",
-    "last_seen": "2026-10-19",
+    "last_seen": "2026-10-20",
     "status": "active",
-    "summary": "Threat actors abused compromised application identities (including GUID 506e08f9-6e9a-4da4-942b-a099a03644ae) within ConnectWise Cloud Backup to bypass authentication and infiltrate 173 downstream Microsoft 365 customer tenants.",
+    "summary": "Threat actors abused compromised application identities (including GUID 506e08f9-6e9a-4da4-942b-a099a03644ae) within ConnectWise Cloud Backup to establish persistence and compromise 173 downstream Microsoft 365 customer tenants.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -51,9 +51,9 @@
   {
     "name": "Commercial BMS and Cold-Chain Disruption Campaign",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-19",
+    "last_seen": "2026-10-20",
     "status": "active",
-    "summary": "Cyber-physical sabotage against internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across French supermarkets, prompting inter-ministerial containment and nationwide OT isolation directives.",
+    "summary": "Cyber-physical sabotage targeting internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across European retail networks; research confirms AI agents can reproduce Danfoss exploit chains in 28 minutes.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -61,6 +61,116 @@
       "Retail Logistics",
       "Commercial Infrastructure",
       "Food Supply"
+    ]
+  },
+  {
+    "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
+    "first_seen": "2026-10-16",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Threat actors (cluster CL-STA-0954) exploited FortiManager CVE-2024-47575 to exfiltrate configs and credentials from 500+ firewalls, deploying stealth in-memory ARM64 malware PEERSTITCH via FortiOS path traversal CVE-2025-61624.",
+    "actors": [
+      "CL-STA-0954 (Suspected Nation-State)"
+    ],
+    "sectors": [
+      "Telecommunications",
+      "Enterprise IT",
+      "Critical Infrastructure"
+    ]
+  },
+  {
+    "name": "AdFection Mercenary Spyware Campaign",
+    "first_seen": "2026-10-15",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Mercenary surveillance ecosystem deploying zero-click exploits (Candiru/Pegasus) against European and Balkan targets, recently confirmed against Serbian anti-corruption figures and journalists.",
+    "actors": [
+      "Candiru",
+      "NSO Group",
+      "Discover-Tech"
+    ],
+    "sectors": [
+      "Media & Journalism",
+      "Legal & Judicial",
+      "Government",
+      "Higher Education"
+    ]
+  },
+  {
+    "name": "GhostAction CI/CD Credential Exfiltration Wave",
+    "first_seen": "2026-10-08",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Supply chain compromise spanning 94+ GitHub repositories, using malicious workflows and weaponized developer font files to deliver infostealers and siphon cloud/CI credentials.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Software Engineering",
+      "Information Technology",
+      "Cloud Infrastructure"
+    ]
+  },
+  {
+    "name": "ROMULUS ClickFix Malware Delivery Cluster",
+    "first_seen": "2026-10-20",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader disguised with repetitive archive padding.",
+    "actors": [
+      "ROMULUS Operators"
+    ],
+    "sectors": [
+      "Information Technology",
+      "Consumer Services",
+      "Enterprise IT"
+    ]
+  },
+  {
+    "name": "Rank Math PRO Supply Chain Tampering",
+    "first_seen": "2026-10-15",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Compromise of the official Rank Math distribution portal delivering trojanized version 3.0.123 packages containing a self-restoring PHP backdoor.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Content Management Systems",
+      "Digital Marketing",
+      "Enterprise Web Hosting"
+    ]
+  },
+  {
+    "name": "ShinyHunters Collusive Extortion Network",
+    "first_seen": "2026-09-15",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Extortion campaign responsible for breaches of fbijobs.gov and corporate targets, operating in collusive coordination with compromised cyber incident response negotiators.",
+    "actors": [
+      "ShinyHunters",
+      "Rey",
+      "Pepijn van der Stap"
+    ],
+    "sectors": [
+      "Government",
+      "Law Enforcement",
+      "Cybersecurity Services"
+    ]
+  },
+  {
+    "name": "Plex2Shell Opportunistic Weaponization Wave",
+    "first_seen": "2026-10-19",
+    "last_seen": "2026-10-20",
+    "status": "active",
+    "summary": "Automated exploitation of a chained four-vulnerability sequence in Plex Media Server within hours of PoC release, deploying crypto-miners and reverse proxies.",
+    "actors": [
+      "Opportunistic Cybercriminals"
+    ],
+    "sectors": [
+      "Consumer Technology",
+      "Cloud Infrastructure",
+      "Enterprise IT"
     ]
   },
   {
@@ -76,39 +186,6 @@
       "Software Engineering",
       "Enterprise IT",
       "Consumer Technology"
-    ]
-  },
-  {
-    "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
-    "first_seen": "2026-10-16",
-    "last_seen": "2026-10-18",
-    "status": "active",
-    "summary": "Exploitation of path traversal flaw CVE-2025-61624 across Fortinet perimeter gateways to execute commands and inject in-memory ARM64 malware PEERSTITCH, bypassing VPN access controls.",
-    "actors": [
-      "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Telecommunications",
-      "Enterprise IT",
-      "Critical Infrastructure"
-    ]
-  },
-  {
-    "name": "AdFection Mercenary Spyware Campaign",
-    "first_seen": "2026-10-15",
-    "last_seen": "2026-10-19",
-    "status": "active",
-    "summary": "Commercial spyware delivery network leveraging Discover-Tech's Controlium RTB platform to deliver zero-click Candiru spyware onto high-profile targets across media, journalism, and international diplomacy.",
-    "actors": [
-      "Candiru",
-      "Discover-Tech",
-      "DARK CARTOGRAPHER"
-    ],
-    "sectors": [
-      "Media & Journalism",
-      "Defense",
-      "Government",
-      "International Diplomacy"
     ]
   },
   {
@@ -141,36 +218,6 @@
       "Healthcare",
       "Telecommunications",
       "Government"
-    ]
-  },
-  {
-    "name": "Ivanti Connect Secure Zero-Day Exploitation Cluster",
-    "first_seen": "2026-10-13",
-    "last_seen": "2026-10-16",
-    "status": "active",
-    "summary": "Threat actor UTA0576 and opportunists weaponizing CVE-2026-104935 to bypass authentication and gain root persistence across perimeter gateways, triggering urgent warnings from CISA and NBSZ NKI.",
-    "actors": [
-      "UTA0576 (Unattributed APT)"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Critical Infrastructure",
-      "Government"
-    ]
-  },
-  {
-    "name": "GhostAction CI/CD Credential Exfiltration Wave",
-    "first_seen": "2026-10-08",
-    "last_seen": "2026-10-16",
-    "status": "active",
-    "summary": "Large-scale compromise of developer accounts and enterprise code repositories, including Meta GitHub source pools, to exfiltrate proprietary code, CI secrets, and deployment keys.",
-    "actors": [
-      "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Software Engineering",
-      "Information Technology",
-      "Cloud Infrastructure"
     ]
   },
   {
