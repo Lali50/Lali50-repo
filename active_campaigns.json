@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-21",
     "status": "active",
-    "summary": "Russian operations continue with extensive ballistic/drone strikes disabling 28 Ukrainian power stations, maritime drone strikes sinking merchant vessels in the Black Sea, and military satellite KOSMOS 2612 maneuvering aggressively against Finnish radar satellite ICEYE-X36.",
+    "summary": "Russian operations continue with drone/missile strikes across Kharkiv, Kyiv, and Kremenchuk, while Ukrainian counter-drone strikes leveled telecom and data center assets in occupied Donetsk and Luhansk.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)"
@@ -14,7 +14,7 @@
       "Maritime Logistics",
       "Aerospace & Defense",
       "Telecommunications",
-      "Public Transportation"
+      "Government"
     ]
   },
   {
@@ -22,7 +22,7 @@
     "first_seen": "2026-10-16",
     "last_seen": "2026-10-18",
     "status": "active",
-    "summary": "Chinese state-sponsored espionage group Armory Castle (formerly UNC5221) weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network access, under emergency CISA KEV directives.",
+    "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network access.",
     "actors": [
       "Armory Castle"
     ],
@@ -36,9 +36,9 @@
   {
     "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
     "first_seen": "2026-10-18",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-21",
     "status": "active",
-    "summary": "Threat actors abused compromised application identities (including GUID 506e08f9-6e9a-4da4-942b-a099a03644ae) within ConnectWise Cloud Backup to establish persistence and compromise 173 downstream Microsoft 365 customer tenants.",
+    "summary": "Threat actors abused compromised application secrets within ConnectWise Cloud Backup to target ~1,000 Entra tenants, executing unauthorized sign-ins and backdooring service principals via MS Graph.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -53,7 +53,7 @@
     "first_seen": "2026-10-13",
     "last_seen": "2026-10-20",
     "status": "active",
-    "summary": "Cyber-physical sabotage targeting internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across European retail networks; research confirms AI agents can reproduce Danfoss exploit chains in 28 minutes.",
+    "summary": "Cyber-physical sabotage targeting internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across European retail networks.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -83,7 +83,7 @@
     "first_seen": "2026-10-15",
     "last_seen": "2026-10-20",
     "status": "active",
-    "summary": "Mercenary surveillance ecosystem deploying zero-click exploits (Candiru/Pegasus) against European and Balkan targets, recently confirmed against Serbian anti-corruption figures and journalists.",
+    "summary": "Mercenary surveillance ecosystem deploying zero-click exploits (Pegasus/Candiru) against Serbian anti-corruption prosecutors and academic leaders ahead of elections.",
     "actors": [
       "Candiru",
       "NSO Group",
@@ -112,18 +112,98 @@
     ]
   },
   {
-    "name": "ROMULUS ClickFix Malware Delivery Cluster",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-10-20",
+    "name": "APT28 European Defense Espionage Campaign",
+    "first_seen": "2025-09-01",
+    "last_seen": "2026-10-21",
     "status": "active",
-    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader disguised with repetitive archive padding.",
+    "summary": "Russian GRU (APT28/Swallowtail) executing targeted intrusions against NATO naval shipbuilders, military aircraft engine manufacturers, and law enforcement agencies using Hookedge and custom ld.exe loaders.",
     "actors": [
-      "ROMULUS Operators"
+      "APT28 (Swallowtail / Forest Blizzard)"
     ],
     "sectors": [
-      "Information Technology",
-      "Consumer Services",
+      "Defense Industrial Base",
+      "Maritime Logistics",
+      "Law Enforcement",
+      "Aerospace & Aviation"
+    ]
+  },
+  {
+    "name": "Operation FlashHole Financial PKI Abuse",
+    "first_seen": "2025-07-01",
+    "last_seen": "2026-10-21",
+    "status": "active",
+    "summary": "Lazarus Group campaign weaponizing mandatory South Korean PKI financial security software INISAFE CrossWeb EX to compromise software, construction, and communications manufacturers.",
+    "actors": [
+      "Lazarus Group"
+    ],
+    "sectors": [
+      "Financial Services",
+      "Software Engineering",
+      "Telecommunications",
+      "Construction"
+    ]
+  },
+  {
+    "name": "SafePay Double-Extortion Campaign",
+    "first_seen": "2024-08-01",
+    "last_seen": "2026-10-21",
+    "status": "active",
+    "summary": "Ransomware operation targeting critical infrastructure across North America, Europe, and Australia by weaponizing edge VPN/firewall CVEs and legitimate administrative tooling.",
+    "actors": [
+      "SafePay Ransomware Group"
+    ],
+    "sectors": [
+      "Critical Infrastructure",
+      "Healthcare",
+      "Government",
+      "Commercial Enterprises"
+    ]
+  },
+  {
+    "name": "eMudhra Compromised Intermediate CA Wave",
+    "first_seen": "2026-10-20",
+    "last_seen": "2026-10-21",
+    "status": "active",
+    "summary": "Compromise of eight intermediate CA private keys belonging to eMudhra, resulting in emergency trust revocations by Google, Mozilla, Apple, and Go language runtimes to prevent TLS spoofing.",
+    "actors": [
+      "Unattributed Threat Actor"
+    ],
+    "sectors": [
+      "Public Key Infrastructure (PKI)",
+      "Enterprise Web Services",
+      "Information Technology"
+    ]
+  },
+  {
+    "name": "Plex2Shell Opportunistic Weaponization Wave",
+    "first_seen": "2026-10-19",
+    "last_seen": "2026-10-21",
+    "status": "active",
+    "summary": "Automated exploitation of a chained four-vulnerability sequence in Plex Media Server added to the CISA KEV catalog, deploying crypto-miners and reverse proxies.",
+    "actors": [
+      "Opportunistic Cybercriminals"
+    ],
+    "sectors": [
+      "Consumer Technology",
+      "Cloud Infrastructure",
       "Enterprise IT"
+    ]
+  },
+  {
+    "name": "ShinyHunters Collusive Extortion Network",
+    "first_seen": "2026-09-15",
+    "last_seen": "2026-10-21",
+    "status": "active",
+    "summary": "Extortion campaign responsible for breaches of fbijobs.gov and corporate targets, operating in collusive coordination with compromised cyber incident response negotiators.",
+    "actors": [
+      "ShinyHunters",
+      "Rey",
+      "Pepijn van der Stap"
+    ],
+    "sectors": [
+      "Government",
+      "Law Enforcement",
+      "Cybersecurity Services"
     ]
   },
   {
@@ -142,96 +222,18 @@
     ]
   },
   {
-    "name": "ShinyHunters Collusive Extortion Network",
-    "first_seen": "2026-09-15",
+    "name": "ROMULUS ClickFix Malware Delivery Cluster",
+    "first_seen": "2026-10-20",
     "last_seen": "2026-10-20",
     "status": "active",
-    "summary": "Extortion campaign responsible for breaches of fbijobs.gov and corporate targets, operating in collusive coordination with compromised cyber incident response negotiators.",
+    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader disguised with repetitive archive padding.",
     "actors": [
-      "ShinyHunters",
-      "Rey",
-      "Pepijn van der Stap"
+      "ROMULUS Operators"
     ],
     "sectors": [
-      "Government",
-      "Law Enforcement",
-      "Cybersecurity Services"
-    ]
-  },
-  {
-    "name": "Plex2Shell Opportunistic Weaponization Wave",
-    "first_seen": "2026-10-19",
-    "last_seen": "2026-10-20",
-    "status": "active",
-    "summary": "Automated exploitation of a chained four-vulnerability sequence in Plex Media Server within hours of PoC release, deploying crypto-miners and reverse proxies.",
-    "actors": [
-      "Opportunistic Cybercriminals"
-    ],
-    "sectors": [
-      "Consumer Technology",
-      "Cloud Infrastructure",
+      "Information Technology",
+      "Consumer Services",
       "Enterprise IT"
-    ]
-  },
-  {
-    "name": "AOMEI Backupper Update Server Tampering Campaign",
-    "first_seen": "2026-05-01",
-    "last_seen": "2026-10-18",
-    "status": "active",
-    "summary": "Threat actors repeatedly compromised AOMEI's official update servers in 5-to-10-minute bursts to deliver trojanized application updates that deployed secondary backdoors onto target Windows endpoints.",
-    "actors": [
-      "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Software Engineering",
-      "Enterprise IT",
-      "Consumer Technology"
-    ]
-  },
-  {
-    "name": "n0n Maritime and Logistics Extortion Wave",
-    "first_seen": "2026-09-01",
-    "last_seen": "2026-10-18",
-    "status": "active",
-    "summary": "Financially motivated extortion collective posting exfiltrated operational EDI feeds, manifests, and system configurations from 38 port and shipping entities across 18 countries via a compromised shared logistics application.",
-    "actors": [
-      "n0n Extortion Group"
-    ],
-    "sectors": [
-      "Maritime Logistics",
-      "Transportation",
-      "Ports & Terminals"
-    ]
-  },
-  {
-    "name": "YAM Store Phishing and Impersonation Ecosystem",
-    "first_seen": "2026-01-01",
-    "last_seen": "2026-10-18",
-    "status": "active",
-    "summary": "Massive Chinese-language cybercrime syndicates (YAM Store, CoGUI, Iron Man) generating over 1 billion phishing messages across 150 countries, recently targeted by joint Microsoft and Health-ISAC domain seizures.",
-    "actors": [
-      "YAM Store Operators",
-      "Storm-2990"
-    ],
-    "sectors": [
-      "Financial Services",
-      "Healthcare",
-      "Telecommunications",
-      "Government"
-    ]
-  },
-  {
-    "name": "MALFEX Supply Chain Infiltration Campaign",
-    "first_seen": "2026-09-30",
-    "last_seen": "2026-10-19",
-    "status": "active",
-    "summary": "Adversaries deploying malicious open-source packages (such as 'imgdecode') to the public npm registry containing native compiled Windows C++ addons to inject in-memory shellcode loaders into developer endpoints.",
-    "actors": [
-      "malfexteste8 (MALFEX Operators)"
-    ],
-    "sectors": [
-      "Software Development",
-      "Information Technology"
     ]
   }
 ]
