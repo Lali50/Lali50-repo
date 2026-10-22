@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-21",
+    "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Russian operations continue with drone/missile strikes across Kharkiv, Kyiv, and Kremenchuk, while Ukrainian counter-drone strikes leveled telecom and data center assets in occupied Donetsk and Luhansk.",
+    "summary": "Russian operations launched a heavy ballistic barrage against Kyiv transport/medical assets and Kharkiv/Dnipro energy grids, while Ukrainian drone strikes hit the 75th Arsenal weapons plant in Serpukhov and assets in Lipetsk; German military upgraded Russian sabotage threat to 'significant'.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)"
@@ -36,11 +36,11 @@
   {
     "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
     "first_seen": "2026-10-18",
-    "last_seen": "2026-10-21",
+    "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Threat actors abused compromised application secrets within ConnectWise Cloud Backup to target ~1,000 Entra tenants, executing unauthorized sign-ins and backdooring service principals via MS Graph.",
+    "summary": "Formally attributed to Chinese state-sponsored actor Storm-0940, who weaponized the ARTEX agentic AI framework to target 2,250+ Microsoft 365 tenants via the ConnectWise multi-tenant app, automating password spraying, Graph reconnaissance, and credential backdoors.",
     "actors": [
-      "Unattributed Threat Actor"
+      "Storm-0940"
     ],
     "sectors": [
       "Managed Service Providers",
@@ -81,9 +81,9 @@
   {
     "name": "AdFection Mercenary Spyware Campaign",
     "first_seen": "2026-10-15",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Mercenary surveillance ecosystem deploying zero-click exploits (Pegasus/Candiru) against Serbian anti-corruption prosecutors and academic leaders ahead of elections.",
+    "summary": "Mercenary surveillance ecosystem targeting Serbian civil society ahead of elections; Citizen Lab confirmed University of Belgrade Rector Vladan Đokić was compromised with Pegasus via zero-click exploit, while prosecutor Rade Bajić received Apple Threat Notifications.",
     "actors": [
       "Candiru",
       "NSO Group",
@@ -162,9 +162,9 @@
   {
     "name": "eMudhra Compromised Intermediate CA Wave",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-21",
+    "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Compromise of eight intermediate CA private keys belonging to eMudhra, resulting in emergency trust revocations by Google, Mozilla, Apple, and Go language runtimes to prevent TLS spoofing.",
+    "summary": "Compromise of eight intermediate CA private keys due to an entropy generation failure reducing P-384 keys to 3-8 bits, triggering revocations across major browsers and emergency updates to Go language runtimes (CVE-2026-111943).",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -192,9 +192,9 @@
   {
     "name": "ShinyHunters Collusive Extortion Network",
     "first_seen": "2026-09-15",
-    "last_seen": "2026-10-21",
+    "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Extortion campaign responsible for breaches of fbijobs.gov and corporate targets, operating in collusive coordination with compromised cyber incident response negotiators.",
+    "summary": "Extortion campaign responsible for breaches of corporate and government targets, operating in collusive coordination with compromised cyber incident response negotiators.",
     "actors": [
       "ShinyHunters",
       "Rey",
@@ -207,24 +207,27 @@
     ]
   },
   {
-    "name": "Rank Math PRO Supply Chain Tampering",
-    "first_seen": "2026-10-15",
-    "last_seen": "2026-10-20",
+    "name": "PHP2Shell Global Remote Code Execution Wave",
+    "first_seen": "2026-10-20",
+    "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Compromise of the official Rank Math distribution portal delivering trojanized version 3.0.123 packages containing a self-restoring PHP backdoor.",
+    "summary": "Global mass-scanning and weaponization of critical unauthenticated RCE flaws (CVE-2026-109618, CVE-2026-109619) in core PHP handling of multipart/form-data with upload progress, impacting millions of internet-facing servers.",
     "actors": [
-      "Unattributed Threat Actor"
+      "Multiple Cybercrime Groups",
+      "Unattributed Scanners"
     ],
     "sectors": [
-      "Content Management Systems",
-      "Digital Marketing",
-      "Enterprise Web Hosting"
+      "Enterprise IT",
+      "Government",
+      "Cloud Infrastructure",
+      "Financial Services",
+      "E-Commerce"
     ]
   },
   {
     "name": "ROMULUS ClickFix Malware Delivery Cluster",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-22",
     "status": "active",
     "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader disguised with repetitive archive padding.",
     "actors": [
