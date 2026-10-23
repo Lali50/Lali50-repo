@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-22",
+    "last_seen": "2026-10-23",
     "status": "active",
-    "summary": "Russian operations launched a heavy ballistic barrage against Kyiv transport/medical assets and Kharkiv/Dnipro energy grids, while Ukrainian drone strikes hit the 75th Arsenal weapons plant in Serpukhov and assets in Lipetsk; German military upgraded Russian sabotage threat to 'significant'.",
+    "summary": "Russian hybrid sabotage continues across CEE; Polish ABW charged a second Georgian operative in the Skrepetsky dissident murder and opened an investigation into a $30,000 arson plot targeting the Flytronic drone plant in Gliwice, while Germany arrested a Ukrainian national spying for Russia.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)"
@@ -15,6 +15,73 @@
       "Aerospace & Defense",
       "Telecommunications",
       "Government"
+    ]
+  },
+  {
+    "name": "AdFection Mercenary Spyware Campaign",
+    "first_seen": "2026-10-15",
+    "last_seen": "2026-10-23",
+    "status": "active",
+    "summary": "Commercial spyware ecosystem delivering zero-click exploits via Discover-Tech's Controlium ad platform for Candiru/Integrity Labs targeting media and CEE entities; Pegasus targeting continues against Serbian civil society ahead of elections, prompting Hungarian elites to acquire US numbers.",
+    "actors": [
+      "Candiru",
+      "NSO Group",
+      "Discover-Tech"
+    ],
+    "sectors": [
+      "Media & Journalism",
+      "Legal & Judicial",
+      "Government",
+      "Higher Education"
+    ]
+  },
+  {
+    "name": "PHP2Shell Global Remote Code Execution Wave",
+    "first_seen": "2026-10-20",
+    "last_seen": "2026-10-23",
+    "status": "active",
+    "summary": "Global weaponization and mass-scanning of critical heap-corruption RCE flaws (CVE-2026-109618, CVE-2026-109619) in PHP core handling multipart/form-data upload progress, forcing the defensive 48-hour shutdown of Hungary's central Magyarorszag.hu portal.",
+    "actors": [
+      "Multiple Cybercrime Groups",
+      "Unattributed Scanners"
+    ],
+    "sectors": [
+      "Enterprise IT",
+      "Government",
+      "Cloud Infrastructure",
+      "Financial Services",
+      "E-Commerce"
+    ]
+  },
+  {
+    "name": "SafePay Double-Extortion Campaign",
+    "first_seen": "2024-08-01",
+    "last_seen": "2026-10-23",
+    "status": "active",
+    "summary": "Ransomware operation targeting critical infrastructure globally; joint FBI/CISA/USSS advisory confirms compromises of over 600 organizations across Europe, the Americas, and Australia using edge appliance CVEs and living-off-the-land techniques.",
+    "actors": [
+      "SafePay Ransomware Group"
+    ],
+    "sectors": [
+      "Critical Infrastructure",
+      "Healthcare",
+      "Government",
+      "Commercial Enterprises"
+    ]
+  },
+  {
+    "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
+    "first_seen": "2026-10-18",
+    "last_seen": "2026-10-22",
+    "status": "active",
+    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and the open-source ARTEX agentic framework, infiltrating 2,250+ downstream Microsoft 365 tenants.",
+    "actors": [
+      "Storm-0940"
+    ],
+    "sectors": [
+      "Managed Service Providers",
+      "Cloud Infrastructure",
+      "Enterprise IT"
     ]
   },
   {
@@ -31,21 +98,6 @@
       "Government",
       "Defense",
       "Software as a Service (SaaS)"
-    ]
-  },
-  {
-    "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
-    "first_seen": "2026-10-18",
-    "last_seen": "2026-10-22",
-    "status": "active",
-    "summary": "Formally attributed to Chinese state-sponsored actor Storm-0940, who weaponized the ARTEX agentic AI framework to target 2,250+ Microsoft 365 tenants via the ConnectWise multi-tenant app, automating password spraying, Graph reconnaissance, and credential backdoors.",
-    "actors": [
-      "Storm-0940"
-    ],
-    "sectors": [
-      "Managed Service Providers",
-      "Cloud Infrastructure",
-      "Enterprise IT"
     ]
   },
   {
@@ -76,24 +128,6 @@
       "Telecommunications",
       "Enterprise IT",
       "Critical Infrastructure"
-    ]
-  },
-  {
-    "name": "AdFection Mercenary Spyware Campaign",
-    "first_seen": "2026-10-15",
-    "last_seen": "2026-10-22",
-    "status": "active",
-    "summary": "Mercenary surveillance ecosystem targeting Serbian civil society ahead of elections; Citizen Lab confirmed University of Belgrade Rector Vladan Đokić was compromised with Pegasus via zero-click exploit, while prosecutor Rade Bajić received Apple Threat Notifications.",
-    "actors": [
-      "Candiru",
-      "NSO Group",
-      "Discover-Tech"
-    ],
-    "sectors": [
-      "Media & Journalism",
-      "Legal & Judicial",
-      "Government",
-      "Higher Education"
     ]
   },
   {
@@ -144,22 +178,6 @@
     ]
   },
   {
-    "name": "SafePay Double-Extortion Campaign",
-    "first_seen": "2024-08-01",
-    "last_seen": "2026-10-21",
-    "status": "active",
-    "summary": "Ransomware operation targeting critical infrastructure across North America, Europe, and Australia by weaponizing edge VPN/firewall CVEs and legitimate administrative tooling.",
-    "actors": [
-      "SafePay Ransomware Group"
-    ],
-    "sectors": [
-      "Critical Infrastructure",
-      "Healthcare",
-      "Government",
-      "Commercial Enterprises"
-    ]
-  },
-  {
     "name": "eMudhra Compromised Intermediate CA Wave",
     "first_seen": "2026-10-20",
     "last_seen": "2026-10-22",
@@ -207,29 +225,11 @@
     ]
   },
   {
-    "name": "PHP2Shell Global Remote Code Execution Wave",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-10-22",
-    "status": "active",
-    "summary": "Global mass-scanning and weaponization of critical unauthenticated RCE flaws (CVE-2026-109618, CVE-2026-109619) in core PHP handling of multipart/form-data with upload progress, impacting millions of internet-facing servers.",
-    "actors": [
-      "Multiple Cybercrime Groups",
-      "Unattributed Scanners"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Government",
-      "Cloud Infrastructure",
-      "Financial Services",
-      "E-Commerce"
-    ]
-  },
-  {
     "name": "ROMULUS ClickFix Malware Delivery Cluster",
     "first_seen": "2026-10-20",
     "last_seen": "2026-10-22",
     "status": "active",
-    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader disguised with repetitive archive padding.",
+    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader.",
     "actors": [
       "ROMULUS Operators"
     ],
