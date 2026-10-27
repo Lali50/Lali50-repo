@@ -17,6 +17,7 @@ from urllib.request import Request, urlopen
 import feedparser
 from bs4 import BeautifulSoup
 from google import genai
+from google.genai import types
 
 try:
     from curl_cffi import requests as curl_requests
@@ -1154,13 +1155,17 @@ def generate_briefing(
     campaigns_data: list,
     profile_data: dict
 ) -> tuple[str, str, str]:
-    """Executes single-turn synthesis with model fallback cascade and returns (response_text, model_used, token_stats_str)."""
+    """Executes single-turn synthesis with streaming and model fallback cascade."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable is missing.")
         sys.exit(1)
 
-    client = genai.Client(api_key=api_key)
+    # 180 másodperces (3 perces) HTTP timeout beállítása, hogy ne ragadjon be 5+ percre egy halott kapcsolat
+    client = genai.Client(
+        api_key=api_key,
+        http_options=types.HttpOptions(timeout=180_000) # milliszekundumban (180s)
+    )
 
     default_cascade = [
         "gemini-3.8-flash",
@@ -1265,26 +1270,39 @@ Exact JSON structure required:
 </untrusted_news_data>
 """
 
+    gen_config = types.GenerateContentConfig(
+        temperature=0.2,
+        max_output_tokens=16384,
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+    )
+
     retries_per_model = 2
-    base_delays = [5, 12]
     last_error = None
 
     for model_name in model_cascade:
-        logger.info(f"Querying Gemini API with model: {model_name}")
+        logger.info(f"Querying Gemini API (streaming) with model: {model_name}")
 
         for attempt in range(retries_per_model):
             try:
-                chat = client.chats.create(model=model_name)
-                response = chat.send_message(prompt)
+                chunks = []
+                last_chunk = None
 
-                if not response or not response.text or not response.text.strip():
-                    reason = "Unknown"
-                    if hasattr(response, "candidates") and response.candidates:
-                        reason = getattr(response.candidates[0], "finish_reason", "Unknown")
-                    raise RuntimeError(f"Gemini ({model_name}) returned an empty response. Finish Reason: {reason}")
+                # A STREAMING HÍVÁS ÉLETBEN TARTJA A TCP KAPCSOLATOT:
+                for chunk in client.models.generate_content_stream(
+                    model=model_name,
+                    contents=prompt,
+                    config=gen_config,
+                ):
+                    if chunk.text:
+                        chunks.append(chunk.text)
+                    last_chunk = chunk
+
+                full_text = "".join(chunks).strip()
+                if not full_text:
+                    raise RuntimeError(f"Gemini ({model_name}) returned an empty stream.")
 
                 token_stats_str = "Unavailable"
-                usage = getattr(response, "usage_metadata", None)
+                usage = getattr(last_chunk, "usage_metadata", None) if last_chunk else None
                 if usage:
                     in_tok = getattr(usage, "prompt_token_count", 0) or 0
                     out_tok = getattr(usage, "candidates_token_count", 0) or 0
@@ -1296,39 +1314,28 @@ Exact JSON structure required:
                     f"Successfully generated briefing using {model_name} "
                     f"(attempt {attempt + 1}) | Tokens: {token_stats_str}"
                 )
-                return response.text, model_name, token_stats_str
+                return full_text, model_name, token_stats_str
 
             except Exception as e:
                 last_error = e
                 error_msg = str(e).lower()
                 logger.warning(f"Model '{model_name}' attempt {attempt + 1}/{retries_per_model} failed: {e}")
 
-                is_transient = any(
-                    k in error_msg
-                    for k in [
-                        "429", "500", "502", "503", "504",
-                        "quota", "rate limit", "unavailable", "overloaded", "resource_exhausted"
-                    ]
-                )
-                is_model_not_found = "404" in error_msg or "not found" in error_msg
-
-                if is_model_not_found:
-                    logger.warning(f"Model '{model_name}' not found or inaccessible. Stepping down immediately...")
+                # Ha nem létezik a modell (404) vagy kimerült a kvóta (429), azonnal lépünk a következő modellre
+                if any(k in error_msg for k in ["404", "not found", "429", "quota", "rate limit", "resource_exhausted"]):
+                    logger.warning(f"Quota or 404 on '{model_name}'. Stepping down immediately to next model...")
                     break
 
-                if is_transient:
-                    if attempt < retries_per_model - 1:
-                        wait_time = base_delays[attempt] + random.uniform(0, 3)
-                        logger.info(f"Transient error on '{model_name}'. Retrying same model in {wait_time:.2f}s...")
-                        time.sleep(wait_time)
-                    else:
-                        logger.warning(f"Exhausted retries for '{model_name}'. Stepping down to next fallback model...")
-                        time.sleep(2)
+                # Minden más hiba (503, Server disconnected, timeout stb.) esetén 1 gyors újrapróbálkozás, majd modellváltás!
+                if attempt < retries_per_model - 1:
+                    wait_time = 5 + random.uniform(0, 3)
+                    logger.info(f"Transient/network error on '{model_name}'. Retrying in {wait_time:.1f}s...")
+                    time.sleep(wait_time)
                 else:
-                    raise RuntimeError(f"Fatal non-transient Gemini API error on {model_name}: {e}")
+                    logger.warning(f"Exhausted retries for '{model_name}'. Stepping down to next fallback model...")
+                    time.sleep(1)
 
     raise RuntimeError(f"All fallback models ({', '.join(model_cascade)}) failed. Last error: {last_error}")
-
 
 # ==============================================================================
 # PAYLOAD ROUTING & PERSISTENCE
