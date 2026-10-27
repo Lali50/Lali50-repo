@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-23",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Russian hybrid sabotage continues across CEE; Polish ABW charged a second Georgian operative in the Skrepetsky dissident murder and opened an investigation into a $30,000 arson plot targeting the Flytronic drone plant in Gliwice, while Germany arrested a Ukrainian national spying for Russia.",
+    "summary": "Russian hybrid sabotage continues across CEE; Romanian intelligence links a September munitions plant arson attempt in Brasov to a Russian network utilizing Belarusian and Ukrainian proxies.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)"
@@ -20,9 +20,9 @@
   {
     "name": "AdFection Mercenary Spyware Campaign",
     "first_seen": "2026-10-15",
-    "last_seen": "2026-10-23",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Commercial spyware ecosystem delivering zero-click exploits via Discover-Tech's Controlium ad platform for Candiru/Integrity Labs targeting media and CEE entities; Pegasus targeting continues against Serbian civil society ahead of elections, prompting Hungarian elites to acquire US numbers.",
+    "summary": "Commercial spyware ecosystem delivering zero-click exploits via Discover-Tech's Controlium ad platform for Candiru/Integrity Labs targeting media and CEE entities; digital targeting ripples across post-election political landscapes.",
     "actors": [
       "Candiru",
       "NSO Group",
@@ -38,9 +38,9 @@
   {
     "name": "PHP2Shell Global Remote Code Execution Wave",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-23",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Global weaponization and mass-scanning of critical heap-corruption RCE flaws (CVE-2026-109618, CVE-2026-109619) in PHP core handling multipart/form-data upload progress, forcing the defensive 48-hour shutdown of Hungary's central Magyarorszag.hu portal.",
+    "summary": "Global weaponization and mass-scanning of critical heap-corruption RCE flaws (CVE-2026-109618, CVE-2026-109619) in PHP core handling multipart/form-data upload progress, triggering active in-the-wild exploitation confirmed by CISA.",
     "actors": [
       "Multiple Cybercrime Groups",
       "Unattributed Scanners"
@@ -54,11 +54,28 @@
     ]
   },
   {
+    "name": "HTTP2Shell / Node2Shell Brotli RCE Wave",
+    "first_seen": "2026-10-21",
+    "last_seen": "2026-10-27",
+    "status": "active",
+    "summary": "Emergency patching wave across Node.js, Microsoft .NET, PowerShell, and Python packages following disclosure of CVE-2026-111497, an out-of-bounds write in Google's Brotli compression library affecting 91% of cloud environments.",
+    "actors": [
+      "Multiple Cybercrime Groups",
+      "Unattributed Scanners"
+    ],
+    "sectors": [
+      "Enterprise IT",
+      "Cloud Infrastructure",
+      "Software Engineering",
+      "Financial Services"
+    ]
+  },
+  {
     "name": "SafePay Double-Extortion Campaign",
     "first_seen": "2024-08-01",
-    "last_seen": "2026-10-23",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Ransomware operation targeting critical infrastructure globally; joint FBI/CISA/USSS advisory confirms compromises of over 600 organizations across Europe, the Americas, and Australia using edge appliance CVEs and living-off-the-land techniques.",
+    "summary": "Ransomware operation targeting critical infrastructure globally; joint FBI/CISA/USSS advisory confirms compromises of over 600 organizations across Europe, the Americas, and Australia.",
     "actors": [
       "SafePay Ransomware Group"
     ],
@@ -72,9 +89,9 @@
   {
     "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
     "first_seen": "2026-10-18",
-    "last_seen": "2026-10-22",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and the open-source ARTEX agentic framework, infiltrating 2,250+ downstream Microsoft 365 tenants.",
+    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and the open-source ARTEX agentic framework, infiltrating downstream Microsoft 365 tenants.",
     "actors": [
       "Storm-0940"
     ],
@@ -87,7 +104,7 @@
   {
     "name": "Armory Castle Zero-Day Exploitation Cluster",
     "first_seen": "2026-10-16",
-    "last_seen": "2026-10-18",
+    "last_seen": "2026-10-27",
     "status": "active",
     "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network access.",
     "actors": [
@@ -103,7 +120,7 @@
   {
     "name": "Commercial BMS and Cold-Chain Disruption Campaign",
     "first_seen": "2026-10-13",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-27",
     "status": "active",
     "summary": "Cyber-physical sabotage targeting internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across European retail networks.",
     "actors": [
@@ -118,9 +135,9 @@
   {
     "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
     "first_seen": "2026-10-16",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Threat actors (cluster CL-STA-0954) exploited FortiManager CVE-2024-47575 to exfiltrate configs and credentials from 500+ firewalls, deploying stealth in-memory ARM64 malware PEERSTITCH via FortiOS path traversal CVE-2025-61624.",
+    "summary": "Threat actors exploited FortiManager CVE-2024-47575 to exfiltrate configs from firewalls, deploying stealth in-memory malware PEERSTITCH via FortiOS path traversal CVE-2025-61624.",
     "actors": [
       "CL-STA-0954 (Suspected Nation-State)"
     ],
@@ -133,9 +150,9 @@
   {
     "name": "GhostAction CI/CD Credential Exfiltration Wave",
     "first_seen": "2026-10-08",
-    "last_seen": "2026-10-20",
+    "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Supply chain compromise spanning 94+ GitHub repositories, using malicious workflows and weaponized developer font files to deliver infostealers and siphon cloud/CI credentials.",
+    "summary": "Supply chain compromise spanning GitHub repositories, using malicious workflows and weaponized font files to deliver infostealers and siphon cloud/CI credentials.",
     "actors": [
       "Unattributed Threat Actor"
     ],
@@ -146,9 +163,24 @@
     ]
   },
   {
+    "name": "Gheist GitHub Actions Log Exfiltration Campaign",
+    "first_seen": "2026-10-24",
+    "last_seen": "2026-10-27",
+    "status": "active",
+    "summary": "Automated threat cluster harvesting stolen GitHub tokens to plant malicious workflows that print private repository secrets directly into GitHub Actions logs for rapid exfiltration.",
+    "actors": [
+      "Gheist Operators"
+    ],
+    "sectors": [
+      "Software Engineering",
+      "Cloud Infrastructure",
+      "Enterprise IT"
+    ]
+  },
+  {
     "name": "APT28 European Defense Espionage Campaign",
     "first_seen": "2025-09-01",
-    "last_seen": "2026-10-21",
+    "last_seen": "2026-10-27",
     "status": "active",
     "summary": "Russian GRU (APT28/Swallowtail) executing targeted intrusions against NATO naval shipbuilders, military aircraft engine manufacturers, and law enforcement agencies using Hookedge and custom ld.exe loaders.",
     "actors": [
@@ -164,7 +196,7 @@
   {
     "name": "Operation FlashHole Financial PKI Abuse",
     "first_seen": "2025-07-01",
-    "last_seen": "2026-10-21",
+    "last_seen": "2026-10-27",
     "status": "active",
     "summary": "Lazarus Group campaign weaponizing mandatory South Korean PKI financial security software INISAFE CrossWeb EX to compromise software, construction, and communications manufacturers.",
     "actors": [
@@ -178,39 +210,9 @@
     ]
   },
   {
-    "name": "eMudhra Compromised Intermediate CA Wave",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-10-22",
-    "status": "active",
-    "summary": "Compromise of eight intermediate CA private keys due to an entropy generation failure reducing P-384 keys to 3-8 bits, triggering revocations across major browsers and emergency updates to Go language runtimes (CVE-2026-111943).",
-    "actors": [
-      "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Public Key Infrastructure (PKI)",
-      "Enterprise Web Services",
-      "Information Technology"
-    ]
-  },
-  {
-    "name": "Plex2Shell Opportunistic Weaponization Wave",
-    "first_seen": "2026-10-19",
-    "last_seen": "2026-10-21",
-    "status": "active",
-    "summary": "Automated exploitation of a chained four-vulnerability sequence in Plex Media Server added to the CISA KEV catalog, deploying crypto-miners and reverse proxies.",
-    "actors": [
-      "Opportunistic Cybercriminals"
-    ],
-    "sectors": [
-      "Consumer Technology",
-      "Cloud Infrastructure",
-      "Enterprise IT"
-    ]
-  },
-  {
     "name": "ShinyHunters Collusive Extortion Network",
     "first_seen": "2026-09-15",
-    "last_seen": "2026-10-22",
+    "last_seen": "2026-10-27",
     "status": "active",
     "summary": "Extortion campaign responsible for breaches of corporate and government targets, operating in collusive coordination with compromised cyber incident response negotiators.",
     "actors": [
@@ -227,7 +229,7 @@
   {
     "name": "ROMULUS ClickFix Malware Delivery Cluster",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-22",
+    "last_seen": "2026-10-27",
     "status": "active",
     "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader.",
     "actors": [
