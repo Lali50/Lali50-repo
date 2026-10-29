@@ -2,27 +2,43 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-28",
     "status": "active",
-    "summary": "Russian hybrid sabotage continues across CEE; Romanian intelligence links a September munitions plant arson attempt in Brasov to a Russian network utilizing Belarusian and Ukrainian proxies.",
+    "summary": "Russian hybrid operations expand to maritime drone strikes on commercial shipping in the Black Sea and coordinated arson attacks against CEE military plants using recruited proxies.",
     "actors": [
       "Russian Armed Forces",
-      "Russian Intelligence (GRU/FSB Proxy Networks)"
+      "Russian Intelligence (GRU/FSB Proxy Networks)",
+      "UAC-0099 (Earth Sirrush)"
     ],
     "sectors": [
-      "Energy Infrastructure",
       "Maritime Logistics",
       "Aerospace & Defense",
-      "Telecommunications",
+      "Energy Infrastructure",
       "Government"
+    ]
+  },
+  {
+    "name": "Volt Typhoon Silent Train Network",
+    "first_seen": "2023-11-01",
+    "last_seen": "2026-10-28",
+    "status": "active",
+    "summary": "Chinese state-sponsored group utilizing a layered, multi-hop proxy network of compromised SOHO/IoT devices to target network management and control plane technologies for zero-day exploitation.",
+    "actors": [
+      "Volt Typhoon (Bronze Silhouette / Voltzite)"
+    ],
+    "sectors": [
+      "Telecommunications",
+      "Critical Infrastructure",
+      "Defense Industrial Base",
+      "Managed Service Providers"
     ]
   },
   {
     "name": "AdFection Mercenary Spyware Campaign",
     "first_seen": "2026-10-15",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-28",
     "status": "active",
-    "summary": "Commercial spyware ecosystem delivering zero-click exploits via Discover-Tech's Controlium ad platform for Candiru/Integrity Labs targeting media and CEE entities; digital targeting ripples across post-election political landscapes.",
+    "summary": "Mercenary spyware actors exploiting CoreGraphics (CVE-2026-86950) to target media and civil society; Apple backports fixes to older OS versions to mitigate the threat.",
     "actors": [
       "Candiru",
       "NSO Group",
@@ -31,34 +47,31 @@
     "sectors": [
       "Media & Journalism",
       "Legal & Judicial",
-      "Government",
-      "Higher Education"
+      "Government"
     ]
   },
   {
     "name": "PHP2Shell Global Remote Code Execution Wave",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-28",
     "status": "active",
-    "summary": "Global weaponization and mass-scanning of critical heap-corruption RCE flaws (CVE-2026-109618, CVE-2026-109619) in PHP core handling multipart/form-data upload progress, triggering active in-the-wild exploitation confirmed by CISA.",
+    "summary": "Global exploitation of PHP multipart/form-data heap corruption; Chinese-linked actors observed chaining PHP2Shell with Fragnesia exploits to root firewalls.",
     "actors": [
       "Multiple Cybercrime Groups",
-      "Unattributed Scanners"
+      "China-linked Hackers"
     ],
     "sectors": [
       "Enterprise IT",
       "Government",
-      "Cloud Infrastructure",
-      "Financial Services",
-      "E-Commerce"
+      "Cloud Infrastructure"
     ]
   },
   {
     "name": "HTTP2Shell / Node2Shell Brotli RCE Wave",
     "first_seen": "2026-10-21",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-28",
     "status": "active",
-    "summary": "Emergency patching wave across Node.js, Microsoft .NET, PowerShell, and Python packages following disclosure of CVE-2026-111497, an out-of-bounds write in Google's Brotli compression library affecting 91% of cloud environments.",
+    "summary": "Mass exploitation of Google Brotli library (CVE-2026-111497); CISA KEV ingestion triggers mandatory federal patching deadlines.",
     "actors": [
       "Multiple Cybercrime Groups",
       "Unattributed Scanners"
@@ -66,8 +79,7 @@
     "sectors": [
       "Enterprise IT",
       "Cloud Infrastructure",
-      "Software Engineering",
-      "Financial Services"
+      "Software Engineering"
     ]
   },
   {
@@ -75,15 +87,14 @@
     "first_seen": "2024-08-01",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Ransomware operation targeting critical infrastructure globally; joint FBI/CISA/USSS advisory confirms compromises of over 600 organizations across Europe, the Americas, and Australia.",
+    "summary": "Ransomware operation targeting critical infrastructure globally; joint FBI/CISA/USSS advisory confirms compromises of over 600 organizations.",
     "actors": [
       "SafePay Ransomware Group"
     ],
     "sectors": [
       "Critical Infrastructure",
       "Healthcare",
-      "Government",
-      "Commercial Enterprises"
+      "Government"
     ]
   },
   {
@@ -91,14 +102,13 @@
     "first_seen": "2026-10-18",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and the open-source ARTEX agentic framework, infiltrating downstream Microsoft 365 tenants.",
+    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and the open-source ARTEX agentic framework.",
     "actors": [
       "Storm-0940"
     ],
     "sectors": [
       "Managed Service Providers",
-      "Cloud Infrastructure",
-      "Enterprise IT"
+      "Cloud Infrastructure"
     ]
   },
   {
@@ -106,30 +116,14 @@
     "first_seen": "2026-10-16",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764 for initial network access.",
+    "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764.",
     "actors": [
       "Armory Castle"
     ],
     "sectors": [
       "Enterprise IT",
       "Government",
-      "Defense",
-      "Software as a Service (SaaS)"
-    ]
-  },
-  {
-    "name": "Commercial BMS and Cold-Chain Disruption Campaign",
-    "first_seen": "2026-10-13",
-    "last_seen": "2026-10-27",
-    "status": "active",
-    "summary": "Cyber-physical sabotage targeting internet-exposed Danfoss, Emerson Copeland, and Dixell BMS controllers across European retail networks.",
-    "actors": [
-      "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Retail Logistics",
-      "Commercial Infrastructure",
-      "Food Supply"
+      "Defense"
     ]
   },
   {
@@ -137,14 +131,13 @@
     "first_seen": "2026-10-16",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Threat actors exploited FortiManager CVE-2024-47575 to exfiltrate configs from firewalls, deploying stealth in-memory malware PEERSTITCH via FortiOS path traversal CVE-2025-61624.",
+    "summary": "Threat actors exploited FortiManager CVE-2024-47575 to exfiltrate configs, deploying stealth in-memory malware PEERSTITCH.",
     "actors": [
       "CL-STA-0954 (Suspected Nation-State)"
     ],
     "sectors": [
       "Telecommunications",
-      "Enterprise IT",
-      "Critical Infrastructure"
+      "Enterprise IT"
     ]
   },
   {
@@ -152,13 +145,12 @@
     "first_seen": "2026-10-08",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Supply chain compromise spanning GitHub repositories, using malicious workflows and weaponized font files to deliver infostealers and siphon cloud/CI credentials.",
+    "summary": "Supply chain compromise spanning GitHub repositories, using malicious workflows to deliver infostealers and siphon cloud credentials.",
     "actors": [
       "Unattributed Threat Actor"
     ],
     "sectors": [
       "Software Engineering",
-      "Information Technology",
       "Cloud Infrastructure"
     ]
   },
@@ -167,14 +159,13 @@
     "first_seen": "2026-10-24",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Automated threat cluster harvesting stolen GitHub tokens to plant malicious workflows that print private repository secrets directly into GitHub Actions logs for rapid exfiltration.",
+    "summary": "Automated threat cluster harvesting stolen GitHub tokens to plant malicious workflows that print private repository secrets into logs.",
     "actors": [
       "Gheist Operators"
     ],
     "sectors": [
       "Software Engineering",
-      "Cloud Infrastructure",
-      "Enterprise IT"
+      "Cloud Infrastructure"
     ]
   },
   {
@@ -182,15 +173,13 @@
     "first_seen": "2025-09-01",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Russian GRU (APT28/Swallowtail) executing targeted intrusions against NATO naval shipbuilders, military aircraft engine manufacturers, and law enforcement agencies using Hookedge and custom ld.exe loaders.",
+    "summary": "Russian GRU (APT28) executing targeted intrusions against NATO naval shipbuilders and military aircraft engine manufacturers.",
     "actors": [
       "APT28 (Swallowtail / Forest Blizzard)"
     ],
     "sectors": [
       "Defense Industrial Base",
-      "Maritime Logistics",
-      "Law Enforcement",
-      "Aerospace & Aviation"
+      "Maritime Logistics"
     ]
   },
   {
@@ -198,15 +187,13 @@
     "first_seen": "2025-07-01",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Lazarus Group campaign weaponizing mandatory South Korean PKI financial security software INISAFE CrossWeb EX to compromise software, construction, and communications manufacturers.",
+    "summary": "Lazarus Group campaign weaponizing mandatory South Korean PKI financial security software INISAFE CrossWeb EX.",
     "actors": [
       "Lazarus Group"
     ],
     "sectors": [
       "Financial Services",
-      "Software Engineering",
-      "Telecommunications",
-      "Construction"
+      "Software Engineering"
     ]
   },
   {
@@ -214,7 +201,7 @@
     "first_seen": "2026-09-15",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Extortion campaign responsible for breaches of corporate and government targets, operating in collusive coordination with compromised cyber incident response negotiators.",
+    "summary": "Extortion campaign responsible for breaches of corporate and government targets, operating in coordination with compromised negotiators.",
     "actors": [
       "ShinyHunters",
       "Rey",
@@ -222,23 +209,21 @@
     ],
     "sectors": [
       "Government",
-      "Law Enforcement",
       "Cybersecurity Services"
     ]
   },
   {
     "name": "ROMULUS ClickFix Malware Delivery Cluster",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-28",
     "status": "active",
-    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and custom GPTs to execute PowerShell staging commands and deliver Legion Loader.",
+    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and fake Cloudflare verification prompts to deliver infostealers.",
     "actors": [
       "ROMULUS Operators"
     ],
     "sectors": [
       "Information Technology",
-      "Consumer Services",
-      "Enterprise IT"
+      "Consumer Services"
     ]
   }
 ]
