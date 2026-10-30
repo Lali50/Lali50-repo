@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-28",
+    "last_seen": "2026-10-29",
     "status": "active",
-    "summary": "Russian hybrid operations expand to maritime drone strikes on commercial shipping in the Black Sea and coordinated arson attacks against CEE military plants using recruited proxies.",
+    "summary": "Russian hybrid operations resulted in the sinking of the container ship ContShip Jet off Bulgaria and lethal ballistic and jet-drone attacks across Ukrainian transit centers, while proxy sabotage networks continue targeting NATO industrial infrastructure.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)",
@@ -20,9 +20,9 @@
   {
     "name": "Volt Typhoon Silent Train Network",
     "first_seen": "2023-11-01",
-    "last_seen": "2026-10-28",
+    "last_seen": "2026-10-29",
     "status": "active",
-    "summary": "Chinese state-sponsored group utilizing a layered, multi-hop proxy network of compromised SOHO/IoT devices to target network management and control plane technologies for zero-day exploitation.",
+    "summary": "Chinese state-sponsored espionage cluster utilizing disposable, multi-hop SOHO/IoT proxy chains to breach critical infrastructure and exploit Cisco SD-WAN appliances for control plane secrets.",
     "actors": [
       "Volt Typhoon (Bronze Silhouette / Voltzite)"
     ],
@@ -53,9 +53,9 @@
   {
     "name": "PHP2Shell Global Remote Code Execution Wave",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-28",
+    "last_seen": "2026-10-30",
     "status": "active",
-    "summary": "Global exploitation of PHP multipart/form-data heap corruption; Chinese-linked actors observed chaining PHP2Shell with Fragnesia exploits to root firewalls.",
+    "summary": "Global exploitation of PHP multipart/form-data heap corruption; threat actors observed chaining PHP2Shell to attack perimeter firewalls and enterprise web services.",
     "actors": [
       "Multiple Cybercrime Groups",
       "China-linked Hackers"
@@ -69,9 +69,9 @@
   {
     "name": "HTTP2Shell / Node2Shell Brotli RCE Wave",
     "first_seen": "2026-10-21",
-    "last_seen": "2026-10-28",
+    "last_seen": "2026-10-30",
     "status": "active",
-    "summary": "Mass exploitation of Google Brotli library (CVE-2026-111497); CISA KEV ingestion triggers mandatory federal patching deadlines.",
+    "summary": "Mass exploitation of Google Brotli library (CVE-2026-111497); threat actors targeting enterprise web gateways and web application infrastructures.",
     "actors": [
       "Multiple Cybercrime Groups",
       "Unattributed Scanners"
@@ -79,6 +79,26 @@
     "sectors": [
       "Enterprise IT",
       "Cloud Infrastructure",
+      "Software Engineering"
+    ]
+  },
+  {
+    "name": "North Korean Agentic AI Cyber Espionage Operations",
+    "first_seen": "2026-10-29",
+    "last_seen": "2026-10-29",
+    "status": "active",
+    "summary": "North Korean APT groups (Jade Sleet, Onyx Sleet, Coral Sleet, Pearl Sleet) adopt the ARTEX agentic framework and generative AI tooling to rapidly deploy fake front companies, synthesize phishing lures, and trojanize source code repositories.",
+    "actors": [
+      "Jade Sleet",
+      "Onyx Sleet",
+      "Coral Sleet",
+      "Pearl Sleet",
+      "Diamond Sleet"
+    ],
+    "sectors": [
+      "Financial Services",
+      "Cryptocurrency",
+      "Defense Industrial Base",
       "Software Engineering"
     ]
   },
@@ -194,22 +214,6 @@
     "sectors": [
       "Financial Services",
       "Software Engineering"
-    ]
-  },
-  {
-    "name": "ShinyHunters Collusive Extortion Network",
-    "first_seen": "2026-09-15",
-    "last_seen": "2026-10-27",
-    "status": "active",
-    "summary": "Extortion campaign responsible for breaches of corporate and government targets, operating in coordination with compromised negotiators.",
-    "actors": [
-      "ShinyHunters",
-      "Rey",
-      "Pepijn van der Stap"
-    ],
-    "sectors": [
-      "Government",
-      "Cybersecurity Services"
     ]
   },
   {
