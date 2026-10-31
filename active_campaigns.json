@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-29",
+    "last_seen": "2026-10-30",
     "status": "active",
-    "summary": "Russian hybrid operations resulted in the sinking of the container ship ContShip Jet off Bulgaria and lethal ballistic and jet-drone attacks across Ukrainian transit centers, while proxy sabotage networks continue targeting NATO industrial infrastructure.",
+    "summary": "Russian hybrid and kinetic operations persist, highlighted by deadly ballistic and drone strikes across Ukrainian urban transit hubs, ongoing Black Sea shipping disruptions, and state-backed sabotage against European defense manufacturing.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)",
@@ -20,7 +20,7 @@
   {
     "name": "Volt Typhoon Silent Train Network",
     "first_seen": "2023-11-01",
-    "last_seen": "2026-10-29",
+    "last_seen": "2026-10-30",
     "status": "active",
     "summary": "Chinese state-sponsored espionage cluster utilizing disposable, multi-hop SOHO/IoT proxy chains to breach critical infrastructure and exploit Cisco SD-WAN appliances for control plane secrets.",
     "actors": [
@@ -38,7 +38,7 @@
     "first_seen": "2026-10-15",
     "last_seen": "2026-10-28",
     "status": "active",
-    "summary": "Mercenary spyware actors exploiting CoreGraphics (CVE-2026-86950) to target media and civil society; Apple backports fixes to older OS versions to mitigate the threat.",
+    "summary": "Mercenary spyware actors exploiting CoreGraphics vulnerabilities to target journalists, dissidents, and civil society actors.",
     "actors": [
       "Candiru",
       "NSO Group",
@@ -55,7 +55,7 @@
     "first_seen": "2026-10-20",
     "last_seen": "2026-10-30",
     "status": "active",
-    "summary": "Global exploitation of PHP multipart/form-data heap corruption; threat actors observed chaining PHP2Shell to attack perimeter firewalls and enterprise web services.",
+    "summary": "Global exploitation of PHP multipart/form-data heap corruption; threat actors chaining PHP2Shell to attack perimeter firewalls and enterprise web services.",
     "actors": [
       "Multiple Cybercrime Groups",
       "China-linked Hackers"
@@ -71,7 +71,7 @@
     "first_seen": "2026-10-21",
     "last_seen": "2026-10-30",
     "status": "active",
-    "summary": "Mass exploitation of Google Brotli library (CVE-2026-111497); threat actors targeting enterprise web gateways and web application infrastructures.",
+    "summary": "Mass exploitation of Google Brotli library flaws; threat actors targeting enterprise web gateways and web application infrastructures.",
     "actors": [
       "Multiple Cybercrime Groups",
       "Unattributed Scanners"
@@ -85,15 +85,15 @@
   {
     "name": "North Korean Agentic AI Cyber Espionage Operations",
     "first_seen": "2026-10-29",
-    "last_seen": "2026-10-29",
+    "last_seen": "2026-10-30",
     "status": "active",
-    "summary": "North Korean APT groups (Jade Sleet, Onyx Sleet, Coral Sleet, Pearl Sleet) adopt the ARTEX agentic framework and generative AI tooling to rapidly deploy fake front companies, synthesize phishing lures, and trojanize source code repositories.",
+    "summary": "North Korean APT groups adopt agentic AI frameworks and generative tooling to rapidly deploy fake corporate entities, synthesize phishing lures, and execute cryptocurrency heists like the multi-billion dollar Binance breach.",
     "actors": [
       "Jade Sleet",
       "Onyx Sleet",
       "Coral Sleet",
       "Pearl Sleet",
-      "Diamond Sleet"
+      "TraderTraitor"
     ],
     "sectors": [
       "Financial Services",
@@ -103,11 +103,28 @@
     ]
   },
   {
+    "name": "Vapor Panda ARTEX Agentic Campaign",
+    "first_seen": "2026-10-17",
+    "last_seen": "2026-10-30",
+    "status": "active",
+    "summary": "Chinese state-sponsored APT Vapor Panda utilizes the AI-powered ARTEX penetration testing framework integrated with DeepSeek to compromise over 140 sensitive government and critical infrastructure targets globally at machine speed.",
+    "actors": [
+      "Vapor Panda (VexatiousTemper)"
+    ],
+    "sectors": [
+      "Government",
+      "Defense",
+      "Telecommunications",
+      "Pharmaceuticals",
+      "Semiconductors"
+    ]
+  },
+  {
     "name": "SafePay Double-Extortion Campaign",
     "first_seen": "2024-08-01",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Ransomware operation targeting critical infrastructure globally; joint FBI/CISA/USSS advisory confirms compromises of over 600 organizations.",
+    "summary": "Ransomware operation targeting critical infrastructure globally; joint advisories confirm compromises across hundreds of organizations.",
     "actors": [
       "SafePay Ransomware Group"
     ],
@@ -122,7 +139,7 @@
     "first_seen": "2026-10-18",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and the open-source ARTEX agentic framework.",
+    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and agentic automation frameworks.",
     "actors": [
       "Storm-0940"
     ],
@@ -136,7 +153,7 @@
     "first_seen": "2026-10-16",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day CVE-2026-102764.",
+    "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day vulnerabilities.",
     "actors": [
       "Armory Castle"
     ],
@@ -151,7 +168,7 @@
     "first_seen": "2026-10-16",
     "last_seen": "2026-10-27",
     "status": "active",
-    "summary": "Threat actors exploited FortiManager CVE-2024-47575 to exfiltrate configs, deploying stealth in-memory malware PEERSTITCH.",
+    "summary": "Threat actors exploited FortiManager vulnerabilities to exfiltrate configs, deploying stealth in-memory malware PEERSTITCH.",
     "actors": [
       "CL-STA-0954 (Suspected Nation-State)"
     ],
@@ -200,20 +217,6 @@
     "sectors": [
       "Defense Industrial Base",
       "Maritime Logistics"
-    ]
-  },
-  {
-    "name": "Operation FlashHole Financial PKI Abuse",
-    "first_seen": "2025-07-01",
-    "last_seen": "2026-10-27",
-    "status": "active",
-    "summary": "Lazarus Group campaign weaponizing mandatory South Korean PKI financial security software INISAFE CrossWeb EX.",
-    "actors": [
-      "Lazarus Group"
-    ],
-    "sectors": [
-      "Financial Services",
-      "Software Engineering"
     ]
   },
   {
