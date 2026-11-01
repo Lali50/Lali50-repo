@@ -2,7 +2,7 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-30",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Russian hybrid and kinetic operations persist, highlighted by deadly ballistic and drone strikes across Ukrainian urban transit hubs, ongoing Black Sea shipping disruptions, and state-backed sabotage against European defense manufacturing.",
     "actors": [
@@ -20,7 +20,7 @@
   {
     "name": "Volt Typhoon Silent Train Network",
     "first_seen": "2023-11-01",
-    "last_seen": "2026-10-30",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Chinese state-sponsored espionage cluster utilizing disposable, multi-hop SOHO/IoT proxy chains to breach critical infrastructure and exploit Cisco SD-WAN appliances for control plane secrets.",
     "actors": [
@@ -36,7 +36,7 @@
   {
     "name": "AdFection Mercenary Spyware Campaign",
     "first_seen": "2026-10-15",
-    "last_seen": "2026-10-28",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Mercenary spyware actors exploiting CoreGraphics vulnerabilities to target journalists, dissidents, and civil society actors.",
     "actors": [
@@ -53,7 +53,7 @@
   {
     "name": "PHP2Shell Global Remote Code Execution Wave",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-30",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Global exploitation of PHP multipart/form-data heap corruption; threat actors chaining PHP2Shell to attack perimeter firewalls and enterprise web services.",
     "actors": [
@@ -69,7 +69,7 @@
   {
     "name": "HTTP2Shell / Node2Shell Brotli RCE Wave",
     "first_seen": "2026-10-21",
-    "last_seen": "2026-10-30",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Mass exploitation of Google Brotli library flaws; threat actors targeting enterprise web gateways and web application infrastructures.",
     "actors": [
@@ -85,7 +85,7 @@
   {
     "name": "North Korean Agentic AI Cyber Espionage Operations",
     "first_seen": "2026-10-29",
-    "last_seen": "2026-10-30",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "North Korean APT groups adopt agentic AI frameworks and generative tooling to rapidly deploy fake corporate entities, synthesize phishing lures, and execute cryptocurrency heists like the multi-billion dollar Binance breach.",
     "actors": [
@@ -105,7 +105,7 @@
   {
     "name": "Vapor Panda ARTEX Agentic Campaign",
     "first_seen": "2026-10-17",
-    "last_seen": "2026-10-30",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Chinese state-sponsored APT Vapor Panda utilizes the AI-powered ARTEX penetration testing framework integrated with DeepSeek to compromise over 140 sensitive government and critical infrastructure targets globally at machine speed.",
     "actors": [
@@ -122,7 +122,7 @@
   {
     "name": "SafePay Double-Extortion Campaign",
     "first_seen": "2024-08-01",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Ransomware operation targeting critical infrastructure globally; joint advisories confirm compromises across hundreds of organizations.",
     "actors": [
@@ -137,7 +137,7 @@
   {
     "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
     "first_seen": "2026-10-18",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and agentic automation frameworks.",
     "actors": [
@@ -151,7 +151,7 @@
   {
     "name": "Armory Castle Zero-Day Exploitation Cluster",
     "first_seen": "2026-10-16",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes BeyondTrust Remote Support zero-day vulnerabilities.",
     "actors": [
@@ -166,7 +166,7 @@
   {
     "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
     "first_seen": "2026-10-16",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Threat actors exploited FortiManager vulnerabilities to exfiltrate configs, deploying stealth in-memory malware PEERSTITCH.",
     "actors": [
@@ -180,7 +180,7 @@
   {
     "name": "GhostAction CI/CD Credential Exfiltration Wave",
     "first_seen": "2026-10-08",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Supply chain compromise spanning GitHub repositories, using malicious workflows to deliver infostealers and siphon cloud credentials.",
     "actors": [
@@ -194,7 +194,7 @@
   {
     "name": "Gheist GitHub Actions Log Exfiltration Campaign",
     "first_seen": "2026-10-24",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Automated threat cluster harvesting stolen GitHub tokens to plant malicious workflows that print private repository secrets into logs.",
     "actors": [
@@ -208,7 +208,7 @@
   {
     "name": "APT28 European Defense Espionage Campaign",
     "first_seen": "2025-09-01",
-    "last_seen": "2026-10-27",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Russian GRU (APT28) executing targeted intrusions against NATO naval shipbuilders and military aircraft engine manufacturers.",
     "actors": [
@@ -222,7 +222,7 @@
   {
     "name": "ROMULUS ClickFix Malware Delivery Cluster",
     "first_seen": "2026-10-20",
-    "last_seen": "2026-10-28",
+    "last_seen": "2026-10-31",
     "status": "active",
     "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and fake Cloudflare verification prompts to deliver infostealers.",
     "actors": [
