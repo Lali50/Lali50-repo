@@ -2,9 +2,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-10-31",
+    "last_seen": "2026-11-01",
     "status": "active",
-    "summary": "Russian hybrid and kinetic operations persist, highlighted by deadly ballistic and drone strikes across Ukrainian urban transit hubs, ongoing Black Sea shipping disruptions, and state-backed sabotage against European defense manufacturing.",
+    "summary": "Russian hybrid and kinetic operations persist, highlighted by massive drone strikes hitting the Ukrainian energy grid and civilian dormitories, persistent airspace violations along NATO's eastern flank (Latvia), and extensive sabotage against European critical infrastructure.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)",
@@ -18,76 +18,11 @@
     ]
   },
   {
-    "name": "Volt Typhoon Silent Train Network",
-    "first_seen": "2023-11-01",
-    "last_seen": "2026-10-31",
-    "status": "active",
-    "summary": "Chinese state-sponsored espionage cluster utilizing disposable, multi-hop SOHO/IoT proxy chains to breach critical infrastructure and exploit Cisco SD-WAN appliances for control plane secrets.",
-    "actors": [
-      "Volt Typhoon (Bronze Silhouette / Voltzite)"
-    ],
-    "sectors": [
-      "Telecommunications",
-      "Critical Infrastructure",
-      "Defense Industrial Base",
-      "Managed Service Providers"
-    ]
-  },
-  {
-    "name": "AdFection Mercenary Spyware Campaign",
-    "first_seen": "2026-10-15",
-    "last_seen": "2026-10-31",
-    "status": "active",
-    "summary": "Mercenary spyware actors exploiting CoreGraphics vulnerabilities to target journalists, dissidents, and civil society actors.",
-    "actors": [
-      "Candiru",
-      "NSO Group",
-      "Discover-Tech"
-    ],
-    "sectors": [
-      "Media & Journalism",
-      "Legal & Judicial",
-      "Government"
-    ]
-  },
-  {
-    "name": "PHP2Shell Global Remote Code Execution Wave",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-10-31",
-    "status": "active",
-    "summary": "Global exploitation of PHP multipart/form-data heap corruption; threat actors chaining PHP2Shell to attack perimeter firewalls and enterprise web services.",
-    "actors": [
-      "Multiple Cybercrime Groups",
-      "China-linked Hackers"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Government",
-      "Cloud Infrastructure"
-    ]
-  },
-  {
-    "name": "HTTP2Shell / Node2Shell Brotli RCE Wave",
-    "first_seen": "2026-10-21",
-    "last_seen": "2026-10-31",
-    "status": "active",
-    "summary": "Mass exploitation of Google Brotli library flaws; threat actors targeting enterprise web gateways and web application infrastructures.",
-    "actors": [
-      "Multiple Cybercrime Groups",
-      "Unattributed Scanners"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Cloud Infrastructure",
-      "Software Engineering"
-    ]
-  },
-  {
     "name": "North Korean Agentic AI Cyber Espionage Operations",
     "first_seen": "2026-10-29",
-    "last_seen": "2026-10-31",
+    "last_seen": "2026-11-02",
     "status": "active",
-    "summary": "North Korean APT groups adopt agentic AI frameworks and generative tooling to rapidly deploy fake corporate entities, synthesize phishing lures, and execute cryptocurrency heists like the multi-billion dollar Binance breach.",
+    "summary": "North Korean state-sponsored threat groups deploy agentic frameworks and complex intrusions, with the FBI and international law enforcement officially attributing the historic $6.3B Binance vault intrusion to TraderTraitor.",
     "actors": [
       "Jade Sleet",
       "Onyx Sleet",
@@ -100,6 +35,38 @@
       "Cryptocurrency",
       "Defense Industrial Base",
       "Software Engineering"
+    ]
+  },
+  {
+    "name": "Ukrainian Strategic Counter-Refinery Deep Strike Wave",
+    "first_seen": "2026-08-26",
+    "last_seen": "2026-11-01",
+    "status": "active",
+    "summary": "Ukrainian deep-strike operations targeting Russian energy and defense industrial base infrastructure, confirmed by strikes on the Lukoil NORSI oil refinery and the Kamensky solid propellant missile fuel plant.",
+    "actors": [
+      "Ukrainian Armed Forces",
+      "Unmanned Systems Forces"
+    ],
+    "sectors": [
+      "Energy Infrastructure",
+      "Defense Industrial Base",
+      "Chemical Manufacturing"
+    ]
+  },
+  {
+    "name": "Storm-1516 / Matryoshka US Election Influence Cluster",
+    "first_seen": "2026-10-20",
+    "last_seen": "2026-11-01",
+    "status": "active",
+    "summary": "Russian state-sponsored influence networks deploy generative AI, cloned media domains, and synthetic deepfake videos to manipulate political narratives and target candidates supporting Ukraine ahead of the US midterms.",
+    "actors": [
+      "Storm-1516",
+      "Matryoshka Group"
+    ],
+    "sectors": [
+      "Government",
+      "Media & Journalism",
+      "Elections Infrastructure"
     ]
   },
   {
@@ -120,32 +87,80 @@
     ]
   },
   {
-    "name": "SafePay Double-Extortion Campaign",
-    "first_seen": "2024-08-01",
+    "name": "Volt Typhoon Silent Train Network",
+    "first_seen": "2023-11-01",
     "last_seen": "2026-10-31",
     "status": "active",
-    "summary": "Ransomware operation targeting critical infrastructure globally; joint advisories confirm compromises across hundreds of organizations.",
+    "summary": "Chinese state-sponsored espionage cluster utilizing disposable, multi-hop SOHO/IoT proxy chains to breach critical infrastructure and exploit Cisco SD-WAN appliances for control plane secrets.",
     "actors": [
-      "SafePay Ransomware Group"
+      "Volt Typhoon (Bronze Silhouette / Voltzite)"
     ],
     "sectors": [
+      "Telecommunications",
       "Critical Infrastructure",
-      "Healthcare",
+      "Defense Industrial Base",
+      "Managed Service Providers"
+    ]
+  },
+  {
+    "name": "Ivanti Connect Secure Zero-Day Exploitation Cluster",
+    "first_seen": "2026-10-30",
+    "last_seen": "2026-11-01",
+    "status": "active",
+    "summary": "Threat actors are actively chaining multiple zero-day vulnerabilities in Ivanti Connect Secure, including CVE-2026-111357, to achieve unauthenticated root execution and bypass enterprise perimeter boundaries.",
+    "actors": [
+      "Unattributed Threat Actors"
+    ],
+    "sectors": [
+      "Enterprise IT",
+      "Government",
+      "Critical Infrastructure"
+    ]
+  },
+  {
+    "name": "VOLTA Infostealer LLM-Powered Doxing Wave",
+    "first_seen": "2026-11-02",
+    "last_seen": "2026-11-02",
+    "status": "active",
+    "summary": "Malware campaign deploying the VOLTA-AUTODOXER implant, which utilizes multi-model LLM chains via OpenRouter to prioritize victim assets and OPSEC posture for automated extortion and triage.",
+    "actors": [
+      "VOLTA Operators"
+    ],
+    "sectors": [
+      "Enterprise IT",
+      "Cryptocurrency",
+      "Consumer Services"
+    ]
+  },
+  {
+    "name": "AdFection Mercenary Spyware Campaign",
+    "first_seen": "2026-10-15",
+    "last_seen": "2026-10-31",
+    "status": "active",
+    "summary": "Mercenary spyware actors exploiting CoreGraphics vulnerabilities to target journalists, dissidents, and civil society actors.",
+    "actors": [
+      "Candiru",
+      "NSO Group",
+      "Discover-Tech"
+    ],
+    "sectors": [
+      "Media & Journalism",
+      "Legal & Judicial",
       "Government"
     ]
   },
   {
-    "name": "ConnectWise Cloud Backup M365 Supply Chain Breach",
-    "first_seen": "2026-10-18",
+    "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
+    "first_seen": "2026-10-16",
     "last_seen": "2026-10-31",
     "status": "active",
-    "summary": "Chinese state-sponsored group Storm-0940 compromised ConnectWise Cloud Backup via password spraying and agentic automation frameworks.",
+    "summary": "Threat actors exploited FortiManager vulnerabilities to exfiltrate configs, deploying stealth in-memory malware PEERSTITCH.",
     "actors": [
-      "Storm-0940"
+      "CL-STA-0954 (Suspected Nation-State)"
     ],
     "sectors": [
-      "Managed Service Providers",
-      "Cloud Infrastructure"
+      "Telecommunications",
+      "Enterprise IT"
     ]
   },
   {
@@ -164,17 +179,34 @@
     ]
   },
   {
-    "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
-    "first_seen": "2026-10-16",
+    "name": "PHP2Shell Global Remote Code Execution Wave",
+    "first_seen": "2026-10-20",
     "last_seen": "2026-10-31",
     "status": "active",
-    "summary": "Threat actors exploited FortiManager vulnerabilities to exfiltrate configs, deploying stealth in-memory malware PEERSTITCH.",
+    "summary": "Global exploitation of PHP multipart/form-data heap corruption; threat actors chaining PHP2Shell to attack perimeter firewalls and enterprise web services.",
     "actors": [
-      "CL-STA-0954 (Suspected Nation-State)"
+      "Multiple Cybercrime Groups",
+      "China-linked Hackers"
     ],
     "sectors": [
-      "Telecommunications",
-      "Enterprise IT"
+      "Enterprise IT",
+      "Government",
+      "Cloud Infrastructure"
+    ]
+  },
+  {
+    "name": "SafePay Double-Extortion Campaign",
+    "first_seen": "2024-08-01",
+    "last_seen": "2026-10-31",
+    "status": "active",
+    "summary": "Ransomware operation targeting critical infrastructure globally; joint advisories confirm compromises across hundreds of organizations.",
+    "actors": [
+      "SafePay Ransomware Group"
+    ],
+    "sectors": [
+      "Critical Infrastructure",
+      "Healthcare",
+      "Government"
     ]
   },
   {
@@ -185,20 +217,6 @@
     "summary": "Supply chain compromise spanning GitHub repositories, using malicious workflows to deliver infostealers and siphon cloud credentials.",
     "actors": [
       "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Software Engineering",
-      "Cloud Infrastructure"
-    ]
-  },
-  {
-    "name": "Gheist GitHub Actions Log Exfiltration Campaign",
-    "first_seen": "2026-10-24",
-    "last_seen": "2026-10-31",
-    "status": "active",
-    "summary": "Automated threat cluster harvesting stolen GitHub tokens to plant malicious workflows that print private repository secrets into logs.",
-    "actors": [
-      "Gheist Operators"
     ],
     "sectors": [
       "Software Engineering",
@@ -217,20 +235,6 @@
     "sectors": [
       "Defense Industrial Base",
       "Maritime Logistics"
-    ]
-  },
-  {
-    "name": "ROMULUS ClickFix Malware Delivery Cluster",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-10-31",
-    "status": "active",
-    "summary": "Malware delivery service deploying ClickFix lures via compromised landing pages and fake Cloudflare verification prompts to deliver infostealers.",
-    "actors": [
-      "ROMULUS Operators"
-    ],
-    "sectors": [
-      "Information Technology",
-      "Consumer Services"
     ]
   }
 ]
