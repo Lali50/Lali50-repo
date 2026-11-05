@@ -1,14 +1,45 @@
 [
   {
+    "name": "European Refrigeration Disruption Campaign",
+    "first_seen": "2026-10-11",
+    "last_seen": "2026-11-04",
+    "status": "active",
+    "summary": "Coordinated cyber-sabotage targeting supermarket and medical refrigeration systems across 7+ European nations, manipulating OT interfaces to destroy perishable goods.",
+    "actors": [
+      "Suspected Russian-aligned (CARR/NoName057)",
+      "Unattributed"
+    ],
+    "sectors": [
+      "Retail",
+      "Healthcare",
+      "Food & Agriculture"
+    ]
+  },
+  {
+    "name": "APT29 Plerdy Supply Chain Campaign",
+    "first_seen": "2026-11-04",
+    "last_seen": "2026-11-04",
+    "status": "active",
+    "summary": "Russian SVR (APT29) hijacking the Plerdy SEO Tracker script to deliver mobile exploits via watering hole attacks on compromised websites.",
+    "actors": [
+      "APT29 (SVR / Cozy Bear)"
+    ],
+    "sectors": [
+      "Technology",
+      "Government",
+      "General Web Users"
+    ]
+  },
+  {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
     "last_seen": "2026-11-04",
     "status": "active",
-    "summary": "Russian hybrid operations persist, highlighted by the largest mass missile and drone strike against Ukraine's energy infrastructure this year, affecting ten oblasts, alongside heightened sabotage alerts along NATO's eastern flank.",
+    "summary": "Russian hybrid operations persist, with HUR reporting production of 200+ missiles/month and ongoing strikes causing critical water/power outages in Kyiv.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)",
-      "UAC-0099 (Earth Sirrush)"
+      "Gorbag"
     ],
     "sectors": [
       "Energy Infrastructure",
@@ -22,12 +53,9 @@
     "first_seen": "2026-10-29",
     "last_seen": "2026-11-04",
     "status": "active",
-    "summary": "North Korean state-sponsored threat groups deploy recruitment-themed social engineering and AI tooling, with the FBI formally attributing the record $6.3B Binance intrusion to TraderTraitor.",
+    "summary": "North Korean state-sponsored threat groups using rigged coding assignments and trojanized AI tools to compromise engineers, as seen in the $6.3B Binance heist.",
     "actors": [
-      "Jade Sleet",
-      "Onyx Sleet",
-      "Coral Sleet",
-      "TraderTraitor"
+      "TraderTraitor (Jade Sleet)"
     ],
     "sectors": [
       "Financial Services",
@@ -38,198 +66,16 @@
   {
     "name": "Ukrainian Strategic Counter-Refinery Deep Strike Wave",
     "first_seen": "2026-08-26",
-    "last_seen": "2026-11-04",
+    "last_seen": "2026-11-05",
     "status": "active",
-    "summary": "Ukrainian deep-strike operations targeting Russian energy and supply logistics, highlighted by a successful nocturnal drone strike on the Ozon logistics center in the Adygea Republic.",
+    "summary": "Ukrainian drone operations targeting Russian energy logistics, including a reported overnight strike on the Ryazan oil refinery.",
     "actors": [
       "Ukrainian Armed Forces",
       "Unmanned Systems Forces"
     ],
     "sectors": [
       "Energy Infrastructure",
-      "Retail & Logistics",
-      "Chemical Manufacturing"
-    ]
-  },
-  {
-    "name": "Storm-1516 / Matryoshka US Election Influence Cluster",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Russian state-sponsored influence networks deploy generative AI and synthetic media to manipulate political narratives and target election infrastructure during the U.S. midterm elections.",
-    "actors": [
-      "Storm-1516",
-      "Matryoshka Group"
-    ],
-    "sectors": [
-      "Government",
-      "Media & Journalism",
-      "Elections Infrastructure"
-    ]
-  },
-  {
-    "name": "Vapor Panda ARTEX Agentic Campaign",
-    "first_seen": "2026-10-17",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Chinese state-sponsored APT Vapor Panda utilizes the AI-powered ARTEX penetration testing framework to compromise sensitive developer platforms and government entities globally.",
-    "actors": [
-      "Vapor Panda (VexatiousTemper)"
-    ],
-    "sectors": [
-      "Government",
-      "Software Engineering",
-      "Telecommunications"
-    ]
-  },
-  {
-    "name": "Volt Typhoon Silent Train Network",
-    "first_seen": "2023-11-01",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Chinese state-sponsored espionage cluster utilizing SOHO/IoT proxy chains to breach critical infrastructure and exploit network management appliances.",
-    "actors": [
-      "Volt Typhoon (Bronze Silhouette / Voltzite)"
-    ],
-    "sectors": [
-      "Telecommunications",
-      "Critical Infrastructure",
-      "Defense Industrial Base"
-    ]
-  },
-  {
-    "name": "Ivanti Connect Secure Zero-Day Exploitation Cluster",
-    "first_seen": "2026-10-30",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Threat actors actively chain zero-day vulnerabilities in Ivanti Connect Secure, including CVE-2026-111357, to achieve unauthenticated root execution.",
-    "actors": [
-      "Unattributed Threat Actors"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Government",
-      "Critical Infrastructure"
-    ]
-  },
-  {
-    "name": "VOLTA Infostealer LLM-Powered Doxing Wave",
-    "first_seen": "2026-11-02",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Malware campaign deploying the VOLTA-AUTODOXER implant, utilizing multi-model LLM chains via OpenRouter to prioritize victim assets for automated extortion.",
-    "actors": [
-      "VOLTA Operators"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Cryptocurrency",
-      "Consumer Services"
-    ]
-  },
-  {
-    "name": "AdFection Mercenary Spyware Campaign",
-    "first_seen": "2026-10-15",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Mercenary spyware actors exploiting graphics vulnerabilities to target journalists, dissidents, and civil society actors.",
-    "actors": [
-      "Candiru",
-      "NSO Group",
-      "Discover-Tech"
-    ],
-    "sectors": [
-      "Media & Journalism",
-      "Legal & Judicial",
-      "Government"
-    ]
-  },
-  {
-    "name": "PEERSTITCH Fortinet Edge Exploitation Wave",
-    "first_seen": "2026-10-16",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Threat actors exploiting FortiManager vulnerabilities to exfiltrate configs and deploy in-memory malware PEERSTITCH.",
-    "actors": [
-      "CL-STA-0954 (Suspected Nation-State)"
-    ],
-    "sectors": [
-      "Telecommunications",
-      "Enterprise IT"
-    ]
-  },
-  {
-    "name": "Armory Castle Zero-Day Exploitation Cluster",
-    "first_seen": "2026-10-16",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Chinese state-sponsored espionage group Armory Castle weaponizes remote support zero-day vulnerabilities.",
-    "actors": [
-      "Armory Castle"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Government",
-      "Defense"
-    ]
-  },
-  {
-    "name": "PHP2Shell Global Remote Code Execution Wave",
-    "first_seen": "2026-10-20",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Global exploitation of PHP heap corruption; threat actors chaining PHP2Shell to attack perimeter firewalls and web services.",
-    "actors": [
-      "Multiple Cybercrime Groups",
-      "China-linked Hackers"
-    ],
-    "sectors": [
-      "Enterprise IT",
-      "Government",
-      "Cloud Infrastructure"
-    ]
-  },
-  {
-    "name": "SafePay Double-Extortion Campaign",
-    "first_seen": "2024-08-01",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Ransomware operation targeting critical infrastructure globally; joint advisories confirm compromises across multiple organizations.",
-    "actors": [
-      "SafePay Ransomware Group"
-    ],
-    "sectors": [
-      "Critical Infrastructure",
-      "Healthcare",
-      "Government"
-    ]
-  },
-  {
-    "name": "GhostAction CI/CD Credential Exfiltration Wave",
-    "first_seen": "2026-10-08",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Supply chain compromise spanning repository workflows, delivering infostealers and siphoning cloud credentials.",
-    "actors": [
-      "Unattributed Threat Actor"
-    ],
-    "sectors": [
-      "Software Engineering",
-      "Cloud Infrastructure"
-    ]
-  },
-  {
-    "name": "APT28 European Defense Espionage Campaign",
-    "first_seen": "2025-09-01",
-    "last_seen": "2026-11-04",
-    "status": "active",
-    "summary": "Russian GRU (APT28) executing targeted intrusions against NATO defense contractors and military manufacturers.",
-    "actors": [
-      "APT28 (Swallowtail / Forest Blizzard)"
-    ],
-    "sectors": [
-      "Defense Industrial Base",
-      "Maritime Logistics"
+      "Retail & Logistics"
     ]
   }
 ]
