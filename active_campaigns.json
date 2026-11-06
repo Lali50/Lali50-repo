@@ -2,9 +2,9 @@
   {
     "name": "European Refrigeration Disruption Campaign",
     "first_seen": "2026-10-11",
-    "last_seen": "2026-11-04",
+    "last_seen": "2026-11-05",
     "status": "active",
-    "summary": "Coordinated cyber-sabotage targeting supermarket and medical refrigeration systems across 7+ European nations, manipulating OT interfaces to destroy perishable goods.",
+    "summary": "Coordinated cyber-sabotage targeting supermarket and healthcare refrigeration systems across 8 European nations, manipulating OT interfaces to destroy perishable goods and blood products.",
     "actors": [
       "Suspected Russian-aligned (CARR/NoName057)",
       "Unattributed"
@@ -18,24 +18,24 @@
   {
     "name": "APT29 Plerdy Supply Chain Campaign",
     "first_seen": "2026-11-04",
-    "last_seen": "2026-11-04",
+    "last_seen": "2026-11-06",
     "status": "active",
-    "summary": "Russian SVR (APT29) hijacking the Plerdy SEO Tracker script to deliver mobile exploits via watering hole attacks on compromised websites.",
+    "summary": "Russian SVR (APT29) hijacking the Plerdy SEO Tracker script to deliver mobile zero-day exploit chains via watering hole attacks on high-value websites.",
     "actors": [
       "APT29 (SVR / Cozy Bear)"
     ],
     "sectors": [
       "Technology",
       "Government",
-      "General Web Users"
+      "Telecommunications"
     ]
   },
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-11-04",
+    "last_seen": "2026-11-06",
     "status": "active",
-    "summary": "Russian hybrid operations persist, with HUR reporting production of 200+ missiles/month and ongoing strikes causing critical water/power outages in Kyiv.",
+    "summary": "Combined kinetic missile strikes and hybrid espionage operations targeting Ukrainian power generation and water supply infrastructure ahead of winter.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)",
@@ -51,9 +51,9 @@
   {
     "name": "North Korean Agentic AI Cyber Espionage Operations",
     "first_seen": "2026-10-29",
-    "last_seen": "2026-11-04",
+    "last_seen": "2026-11-05",
     "status": "active",
-    "summary": "North Korean state-sponsored threat groups using rigged coding assignments and trojanized AI tools to compromise engineers, as seen in the $6.3B Binance heist.",
+    "summary": "North Korean state-sponsored threat groups using rigged coding assignments and trojanized AI tools to compromise engineers, resulting in large-scale cryptocurrency heists.",
     "actors": [
       "TraderTraitor (Jade Sleet)"
     ],
@@ -68,7 +68,7 @@
     "first_seen": "2026-08-26",
     "last_seen": "2026-11-05",
     "status": "active",
-    "summary": "Ukrainian drone operations targeting Russian energy logistics, including a reported overnight strike on the Ryazan oil refinery.",
+    "summary": "Ukrainian unmanned drone operations targeting Russian energy logistics and regional refinery infrastructure.",
     "actors": [
       "Ukrainian Armed Forces",
       "Unmanned Systems Forces"
@@ -76,6 +76,22 @@
     "sectors": [
       "Energy Infrastructure",
       "Retail & Logistics"
+    ]
+  },
+  {
+    "name": "VAPOR PANDA Agentic AI Reconnaissance Campaign",
+    "first_seen": "2026-10-17",
+    "last_seen": "2026-11-06",
+    "status": "active",
+    "summary": "China-nexus threat actor using the ARTEX multi-agent AI framework and commercial LLMs to automate simultaneous global intrusions against government and defense targets.",
+    "actors": [
+      "VAPOR PANDA"
+    ],
+    "sectors": [
+      "Government",
+      "Defense",
+      "Semiconductor",
+      "Pharmaceuticals"
     ]
   }
 ]
