@@ -2,9 +2,9 @@
   {
     "name": "European Refrigeration Disruption Campaign",
     "first_seen": "2026-10-11",
-    "last_seen": "2026-11-05",
+    "last_seen": "2026-11-07",
     "status": "active",
-    "summary": "Coordinated cyber-sabotage targeting supermarket and healthcare refrigeration systems across 8 European nations, manipulating OT interfaces to destroy perishable goods and blood products.",
+    "summary": "Coordinated cyber-sabotage targeting supermarket and healthcare refrigeration systems across 8 European nations, manipulating OT interfaces to destroy perishable goods and blood products, prompting joint CISA/FBI emergency warnings.",
     "actors": [
       "Suspected Russian-aligned (CARR/NoName057)",
       "Unattributed"
@@ -12,7 +12,8 @@
     "sectors": [
       "Retail",
       "Healthcare",
-      "Food & Agriculture"
+      "Food & Agriculture",
+      "Transportation"
     ]
   },
   {
@@ -33,9 +34,9 @@
   {
     "name": "Russian CEE Kinetic and Sabotage Campaign",
     "first_seen": "2026-10-12",
-    "last_seen": "2026-11-06",
+    "last_seen": "2026-11-07",
     "status": "active",
-    "summary": "Combined kinetic missile strikes and hybrid espionage operations targeting Ukrainian power generation and water supply infrastructure ahead of winter.",
+    "summary": "Combined kinetic ballistic/drone strikes and hybrid operations targeting Ukrainian power generation, nuclear plant grid interconnects, transport bridges, and regional infrastructure ahead of winter.",
     "actors": [
       "Russian Armed Forces",
       "Russian Intelligence (GRU/FSB Proxy Networks)",
@@ -45,7 +46,8 @@
       "Energy Infrastructure",
       "Critical Infrastructure",
       "Government",
-      "Defense"
+      "Defense",
+      "Transportation"
     ]
   },
   {
@@ -66,15 +68,17 @@
   {
     "name": "Ukrainian Strategic Counter-Refinery Deep Strike Wave",
     "first_seen": "2026-08-26",
-    "last_seen": "2026-11-05",
+    "last_seen": "2026-11-07",
     "status": "active",
-    "summary": "Ukrainian unmanned drone operations targeting Russian energy logistics and regional refinery infrastructure.",
+    "summary": "Ukrainian Neptune cruise missile and drone strikes targeting Russian military-industrial facilities, optoelectronic plants, and regional refinery logistics.",
     "actors": [
       "Ukrainian Armed Forces",
+      "Ukrainian Navy",
       "Unmanned Systems Forces"
     ],
     "sectors": [
       "Energy Infrastructure",
+      "Defense Industrial Base",
       "Retail & Logistics"
     ]
   },
@@ -92,6 +96,36 @@
       "Defense",
       "Semiconductor",
       "Pharmaceuticals"
+    ]
+  },
+  {
+    "name": "Storm-3358 ARTEX Financial Exploitation Wave",
+    "first_seen": "2026-10-28",
+    "last_seen": "2026-11-07",
+    "status": "active",
+    "summary": "Cambodia-based cybercriminal cluster weaponizing the ARTEX agentic framework to scan, breach, and deploy WISP, vshell, and AdaptixC2 RATs across global and regional financial institutions.",
+    "actors": [
+      "Storm-3358"
+    ],
+    "sectors": [
+      "Financial Services",
+      "Banking"
+    ]
+  },
+  {
+    "name": "European Aviation and Public Transit Bomb Hoax Campaign",
+    "first_seen": "2026-11-05",
+    "last_seen": "2026-11-07",
+    "status": "active",
+    "summary": "Coordinated wave of anonymous bomb threats disrupting dozens of commercial European flights, triggering fighter scrambles in Hungary, and targeting Irish media organizations ahead of the Dublin EPC summit.",
+    "actors": [
+      "Unattributed",
+      "Suspected Pro-Russian Hybrid Operatives"
+    ],
+    "sectors": [
+      "Aviation",
+      "Transportation",
+      "Media"
     ]
   }
 ]
